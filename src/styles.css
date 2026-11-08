@@ -8,6 +8,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "leaflet/dist/leaflet.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -188,4 +189,21 @@
 
 @utility bg-gradient-primary {
   background-image: var(--gradient-primary);
+}
+
+.restaurant-map.leaflet-container {
+  z-index: 0;
+  font-family: var(--font-sans);
+  background: var(--muted);
+}
+
+.restaurant-map-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--primary-foreground);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font: 700 12px var(--font-sans);
 }

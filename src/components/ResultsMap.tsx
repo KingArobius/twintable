@@ -1,84 +1,65 @@
 import { useEffect, useRef, useState } from "react";
+import type { Map as LeafletMap } from "leaflet";
 import type { Recommendation } from "@/lib/recommend.functions";
 
-declare global {
-  interface Window {
-    google?: any;
-  }
-}
-
-let loaderPromise: Promise<void> | null = null;
-
-function loadMaps(): Promise<void> {
-  if (window.google?.maps) return Promise.resolve();
-  if (loaderPromise) return loaderPromise;
-  const key = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"];
-  const channel = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID"];
-  if (!key) return Promise.reject(new Error("no key"));
-  loaderPromise = new Promise((resolve, reject) => {
-    const cb = `__initTwinTableMap${Date.now()}`;
-    (window as any)[cb] = () => {
-      delete (window as any)[cb];
-      resolve();
-    };
-    const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${cb}&channel=${channel}`;
-    s.onerror = () => reject(new Error("load failed"));
-    document.head.appendChild(s);
-  });
-  return loaderPromise;
+export function mapRestaurants(results: (Recommendation & { rank?: number })[]) {
+  return results.map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
+    .filter(({ r }) => typeof r.lat === "number" && Number.isFinite(r.lat) && Math.abs(r.lat) <= 90
+      && typeof r.lng === "number" && Number.isFinite(r.lng) && Math.abs(r.lng) <= 180);
 }
 
 export function ResultsMap({ results }: { results: (Recommendation & { rank?: number })[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
-  const located = results
-    .map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
-    .filter((x) => typeof x.r.lat === "number" && typeof x.r.lng === "number");
+  const located = mapRestaurants(results);
 
   useEffect(() => {
     if (!located.length || !ref.current) return;
     let cancelled = false;
-    loadMaps()
-      .then(() => {
-        if (cancelled || !ref.current || !window.google?.maps) return;
-        const bounds = new window.google.maps.LatLngBounds();
-        const map = new window.google.maps.Map(ref.current, {
-          clickableIcons: false,
-          mapTypeControl: false,
-          streetViewControl: false,
-        });
+    let map: LeafletMap | undefined;
+    setFailed(false);
+    import("leaflet")
+      .then((L) => {
+        if (cancelled || !ref.current) return;
+        map = L.map(ref.current, { scrollWheelZoom: false });
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+          maxZoom: 19,
+        }).addTo(map);
+        const bounds = L.latLngBounds([]);
         located.forEach(({ r, rank }) => {
-          if (typeof r.lat !== "number" || typeof r.lng !== "number") return;
-          const pos = { lat: r.lat, lng: r.lng };
+          if (!map || typeof r.lat !== "number" || typeof r.lng !== "number") return;
+          const pos = L.latLng(r.lat, r.lng);
           bounds.extend(pos);
-          const marker = new window.google.maps.Marker({
-            map,
-            position: pos,
+          const label = document.createElement("span");
+          label.textContent = String(rank);
+          const marker = L.marker(pos, {
             title: `${r.name}${r.address ? ` — ${r.address}` : ""}`,
-            label: { text: String(rank), color: "#ffffff" },
-          });
-          marker.addListener("click", () => window.open(r.mapsUrl, "_blank", "noopener"));
+            alt: `Restaurant ${rank}: ${r.name}`,
+            icon: L.divIcon({ html: label, className: "restaurant-map-marker", iconSize: [28, 28], iconAnchor: [14, 14] }),
+          }).addTo(map);
+          marker.on("click", () => window.open(r.mapsUrl, "_blank", "noopener,noreferrer"));
         });
         if (located.length === 1) {
-          map.setCenter(bounds.getCenter());
-          map.setZoom(17);
+          map.setView(bounds.getCenter(), 17);
         } else {
-          map.fitBounds(bounds, 60);
+          map.fitBounds(bounds, { padding: [30, 30], maxZoom: 17 });
         }
       })
       .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
+      map?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results]);
 
-  if (!located.length || failed) return null;
+  if (!located.length) return null;
 
   return (
     <div className="glass mb-6 overflow-hidden rounded-3xl">
-      <div ref={ref} className="h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
+      <div ref={ref} className="restaurant-map h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
+      {failed && <p role="alert" className="px-4 py-2 text-xs text-destructive">Couldn't load the map. Restaurant links are still available above.</p>}
       <p className="px-4 py-2 text-xs text-muted-foreground">
         {located.length < results.length ? `${results.length - located.length} restaurant location(s) could not be verified and are not pinned.` : null}
       </p>
