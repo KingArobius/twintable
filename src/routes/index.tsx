@@ -131,7 +131,7 @@ function Index() {
               </span>
               .
             </span>
-          </p>
+          </div>
           <button disabled={loading} className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary-foreground/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 md:mt-0">
             <Sparkles className="h-4 w-4" />
             {loading ? "Searching…" : "Search"}
