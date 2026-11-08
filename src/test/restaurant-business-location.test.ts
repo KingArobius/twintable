@@ -26,7 +26,8 @@ describe("Google business locations", () => {
     expect(restaurantBusinessLocation([{ ...listing, businessStatus: "CLOSED_TEMPORARILY" }], "Twin Cafe", "Austin")).toBeNull();
   });
   it("rejects businesses without confirmed operating status", () => {
-    expect(restaurantBusinessLocation([{ ...listing, businessStatus: undefined }], "Twin Cafe", "Austin")).toBeNull();
+    const { businessStatus, ...unknownStatus } = listing;
+    expect(restaurantBusinessLocation([unknownStatus], "Twin Cafe", "Austin")).toBeNull();
   });
   it("rejects invalid coordinates", () => {
     expect(restaurantBusinessLocation([{ ...listing, location: { latitude: 100, longitude: 0 } }], "Twin Cafe", "Austin")).toBeNull();

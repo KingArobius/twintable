@@ -2,13 +2,14 @@ import { describe, expect, it } from "vitest";
 import { aiMatchesSchema } from "@/lib/recommendation-cache";
 import { verifyRecommendationCandidates } from "@/lib/verified-recommendations";
 
-const candidates = Array.from({ length: 9 }, (_, i) => ({ name: `Venue ${i + 1}`, price: 2 as const, ratings: { food: 4, ambiance: 4, service: 4, overall: 4 } }));
+const candidate = (name: string) => ({ name, price: 2 as const, ratings: { food: 4, ambiance: 4, service: 4, overall: 4 } });
+const candidates = Array.from({ length: 9 }, (_, i) => candidate(`Venue ${i + 1}`));
 const location = (id: string) => ({ lat: 47.61, lng: -122.34, address: "86 Pine St, Seattle", placeId: id });
 
 describe("Verified recommendation shortlist", () => {
   it("accepts nine AI candidates but rejects an unbounded shortlist", () => {
     expect(aiMatchesSchema.parse({ results: candidates }).results).toHaveLength(9);
-    expect(aiMatchesSchema.safeParse({ results: [...candidates, candidates[0]] }).success).toBe(false);
+    expect(aiMatchesSchema.safeParse({ results: [...candidates, candidate("Venue 10")] }).success).toBe(false);
   });
   it("replaces two unverified candidates with backups and returns six in AI order", async () => {
     const result = await verifyRecommendationCandidates(candidates, async (name) => ["Venue 1", "Venue 2"].includes(name) ? null : location(name));
@@ -30,7 +31,7 @@ describe("Verified recommendation shortlist", () => {
   });
   it("deduplicates names before lookup and Google business IDs before display", async () => {
     const names: string[] = [];
-    const result = await verifyRecommendationCandidates([candidates[0], { ...candidates[0], name: "  VENUE 1  " }, candidates[1], candidates[2]], async (name) => {
+    const result = await verifyRecommendationCandidates([candidate("Venue 1"), candidate("  VENUE 1  "), candidate("Venue 2"), candidate("Venue 3")], async (name) => {
       names.push(name);
       return location(name === "Venue 2" ? "Venue 1" : name);
     });
@@ -43,6 +44,6 @@ describe("Verified recommendation shortlist", () => {
     expect(await verifyRecommendationCandidates(candidates, async () => null)).toEqual([]);
   });
   it("never exposes a result whose coordinates are invalid", async () => {
-    expect(await verifyRecommendationCandidates([candidates[0]], async () => ({ ...location("one"), lat: 100 }))).toEqual([]);
+    expect(await verifyRecommendationCandidates([candidate("Venue 1")], async () => ({ ...location("one"), lat: 100 }))).toEqual([]);
   });
 });
