@@ -194,7 +194,6 @@ function Index() {
 
         {data && (
           <section className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500 sm:mt-12">
-            {completedSearch && <div className="mb-4"><SearchShare search={completedSearch} /></div>}
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <div className="glass overflow-x-auto rounded-3xl">
@@ -272,6 +271,7 @@ function Index() {
             </div>
             </>
             ); })()}
+            {completedSearch && <div className="mt-4"><SearchShare search={completedSearch} /></div>}
           </section>
         )}
       </div>
