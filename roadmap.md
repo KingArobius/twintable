@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Publish project for twintable.app (publishing approval declined)
+- [ ] Connect user-owned Google Maps browser key for twintable.app (GOOGLE_API_KEY is saved; connector setup required)
+
 - [x] Modernize UI (glass surfaces, gradient button, refined table/dropdown/map)
 - [x] Verify restyled results view with a real search
 - [x] Background color shifts to another color as you scroll (keep emerald family)
