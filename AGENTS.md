@@ -31,7 +31,7 @@ use the editor.
 
 - Validate restaurant geocodes in the shared location helper; only precise business or numbered street-address matches may become pins, never city centroids or partial matches.
 - Resolve recommendation pins through server-only Google Places business search; validate the business name, city, and coordinates in the shared location helper rather than trusting AI addresses.
-- Normalize punctuation and generic restaurant descriptors when matching Google business names; search with the full destination context and validate the locality separately to avoid wrong-city pins.
+- Normalize punctuation and generic restaurant descriptors when matching Google business names; search with the full destination context and validate the area separately (matching locality/sublocality or within a metro radius of the geocoded city center) so neighborhood-filed venues pin while wrong-city branches do not.
 - Restaurant searches and autocomplete are public without sign-in; keep paid API credentials server-only and preserve cross-site request protection, six-result caps, name deduplication, and concurrency at six or below.
 - Cache only validated, independently generated AI matches in a server-only database table with hashed normalized keys and expiry; refresh Google location data per search and fail open on cache errors to preserve availability.
 - Maintain router-derived sitemap inclusion with explicit staticData decisions on every route; omit lastmod unless an authoritative page-specific content timestamp exists.
