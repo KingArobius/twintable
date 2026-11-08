@@ -91,7 +91,7 @@ function Index() {
     setData(null);
     try {
       const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}` } });
-      if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })) });
+      if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })), cityLat: r.cityLat, cityLng: r.cityLng });
       else setError(r.error);
     } catch {
       setError("Something went wrong. Please try again.");
