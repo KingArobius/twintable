@@ -77,6 +77,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
         .join("");
       const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
       const parsed = JSON.parse(json) as { reference: string; results: Recommendation[] };
+      const cityLoc = await geocodeCity(data.city);
       const results = await Promise.all(
         parsed.results.slice(0, 6).map(async (r) => {
           const loc = await geocode(r.name, r.address, data.city);
@@ -90,7 +91,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
           };
         }),
       );
-      return { ok: true as const, reference: parsed.reference, results };
+      return { ok: true as const, reference: parsed.reference, results, cityLat: cityLoc?.lat, cityLng: cityLoc?.lng };
     } catch (e) {
       console.error(e);
       const msg = e instanceof GatewayError ? "The AI service is busy or unavailable. Please try again." : "Couldn't read the recommendations. Please try again.";
