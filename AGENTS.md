@@ -30,3 +30,5 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - Validate restaurant geocodes in the shared location helper; only precise business or numbered street-address matches may become pins, never city centroids or partial matches.
+- Resolve recommendation pins through server-only Google Places business search; validate the business name, city, and coordinates in the shared location helper rather than trusting AI addresses.
+- Protect paid Google lookups with Cloud authentication; cap recommendations at six, deduplicate names per search, and keep concurrency at six or below.
