@@ -224,7 +224,9 @@ function Index() {
                 </tbody>
               </table>
             </div>
-            <ResultsMap results={data.results} cityLat={data.cityLat} cityLng={data.cityLng} />
+            <div className="mt-4">
+              <ResultsMap results={data.results} cityLat={data.cityLat} cityLng={data.cityLng} />
+            </div>
             </>
             ); })()}
           </section>
