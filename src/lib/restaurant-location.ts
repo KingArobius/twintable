@@ -43,19 +43,24 @@ export type BusinessPlace = {
 };
 
 function normalized(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[’']/g, "").replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+const restaurantDescriptors = new Set(["the", "and", "restaurant", "restaurants", "cafe", "bar", "grill", "kitchen", "bakery"]);
+function businessWords(value: string) {
+  return normalized(value).split(" ").filter((word) => word && !restaurantDescriptors.has(word));
 }
 
 // Places coordinates identify the business itself, not an AI-supplied address.
 export function restaurantBusinessLocation(places: BusinessPlace[], name: string, city: string) {
-  const requested = normalized(name).split(" ").filter(Boolean);
+  const requested = businessWords(name);
   for (const place of places) {
     const location = place.location;
-    const title = normalized(place.displayName?.text ?? "");
+    const title = businessWords(place.displayName?.text ?? "");
     const business = place.types?.some((type) => ["restaurant", "food", "cafe", "bar", "bakery", "meal_takeaway"].includes(type));
     const cities = place.addressComponents?.filter((part) => part.types?.some((type) => ["locality", "postal_town", "sublocality", "sublocality_level_1"].includes(type))) ?? [];
     const sameCity = cities.some((part) => normalized(part.longText ?? "") === normalized(city));
-    const sameName = requested.length > 0 && requested.every((word) => title.split(" ").includes(word));
+    const sameName = requested.length > 0 && requested.every((word) => title.includes(word));
     if (!business || !sameCity || !sameName || !place.id || !place.formattedAddress || !location
       || place.businessStatus === "CLOSED_PERMANENTLY"
       || !Number.isFinite(location.latitude) || !Number.isFinite(location.longitude)

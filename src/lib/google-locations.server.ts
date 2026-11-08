@@ -1,6 +1,6 @@
 import { restaurantBusinessLocation, type BusinessPlace } from "./restaurant-location";
 
-export async function findRestaurantBusiness(name: string, city: string, center: { lat: number; lng: number } | null) {
+export async function findRestaurantBusiness(name: string, city: string, center: { lat: number; lng: number } | null, searchArea = city) {
   const lk = process.env["LOVABLE_API_KEY"];
   const gk = process.env["GOOGLE_MAPS_API_KEY"];
   if (!lk || !gk) throw new Error("Google restaurant lookup isn't configured.");
@@ -11,7 +11,7 @@ export async function findRestaurantBusiness(name: string, city: string, center:
       "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.businessStatus,places.addressComponents",
     },
     body: JSON.stringify({
-      textQuery: `${name} restaurant in ${city}`, pageSize: 3,
+      textQuery: `${name} restaurant in ${searchArea}`, pageSize: 6,
       ...(center ? { locationBias: { circle: { center: { latitude: center.lat, longitude: center.lng }, radius: 25000 } } } : {}),
     }),
   });
