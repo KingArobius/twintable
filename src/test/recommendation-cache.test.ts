@@ -36,7 +36,7 @@ describe("Recommendation cost controls", () => {
     const result = await recommendRestaurants({ data: { restaurant: "Franklin BBQ", city: "Austin, Texas", cityName: "Austin" } });
     expect(result.ok).toBe(true);
     expect(generateMessage).not.toHaveBeenCalled();
-    expect(findRestaurantBusiness).toHaveBeenCalledWith("Test BBQ", "Austin", { lat: 30.2, lng: -97.7 });
+    expect(findRestaurantBusiness).toHaveBeenCalledWith("Test BBQ", "Austin", { lat: 30.2, lng: -97.7 }, "Austin, Texas");
     vi.unstubAllGlobals();
   });
 });
