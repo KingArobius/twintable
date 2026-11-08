@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 function Stars({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(5, value)) * 20;
   return (
-    <span className="relative inline-block text-xs leading-none tracking-normal sm:text-lg sm:tracking-widest" aria-label={`${value} of 5`}>
+    <span className="relative inline-block text-[10px] leading-none tracking-normal sm:text-lg sm:tracking-widest" aria-label={`${value} of 5`}>
       <span className="text-border">★★★★★</span>
       <span className="absolute inset-0 overflow-hidden text-primary" style={{ width: `${pct}%` }}>★★★★★</span>
     </span>
@@ -148,10 +148,10 @@ function Index() {
                       <td className="px-1.5 py-2 sm:px-4 sm:py-4">
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
                       </td>
-                      <td className="max-w-24 px-1.5 py-2 sm:max-w-none sm:px-4 sm:py-4">
+                      <td className="max-w-20 px-1 py-2 sm:max-w-none sm:px-4 sm:py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="block truncate font-display text-xs hover:underline sm:text-lg">{r.name}</a>
                       </td>
-                      <td className="whitespace-nowrap px-1.5 py-2 font-mono text-xs sm:px-4 sm:py-4 sm:text-sm">
+                      <td className="whitespace-nowrap px-1 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
                         <span className="text-primary">{"$".repeat(r.price)}</span>
                         <span className="text-border">{"$".repeat(4 - r.price)}</span>
                       </td>
