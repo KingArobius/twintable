@@ -25,4 +25,16 @@ describe("Google business locations", () => {
   it("rejects invalid coordinates", () => {
     expect(restaurantBusinessLocation([{ ...listing, location: { latitude: 100, longitude: 0 } }], "Twin Cafe", "Austin")).toBeNull();
   });
+  it("matches apostrophe variations in Google's business name", () => {
+    expect(restaurantBusinessLocation([{ ...listing, displayName: { text: "Joe’s Cafe" } }], "Joes Cafe", "Austin")?.placeId).toBe("google-business");
+  });
+  it("matches restaurant descriptors without requiring them in Google's title", () => {
+    expect(restaurantBusinessLocation([listing], "Twin Cafe Restaurant", "Austin")?.placeId).toBe("google-business");
+  });
+  it("matches ampersands and written conjunctions", () => {
+    expect(restaurantBusinessLocation([{ ...listing, displayName: { text: "Salt & Time" } }], "Salt and Time", "Austin")?.placeId).toBe("google-business");
+  });
+  it("does not match names made only of generic restaurant descriptors", () => {
+    expect(restaurantBusinessLocation([listing], "Cafe Restaurant", "Austin")).toBeNull();
+  });
 });

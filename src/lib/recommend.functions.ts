@@ -67,7 +67,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
           const key = name.toLowerCase();
           let lookup = lookups.get(key);
           if (!lookup) {
-            lookup = findRestaurantBusiness(name, data.cityName, cityLoc);
+            lookup = findRestaurantBusiness(name, data.cityName, cityLoc, data.city);
             lookups.set(key, lookup);
           }
           const loc = await lookup;
