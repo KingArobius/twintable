@@ -115,7 +115,7 @@ function Index() {
         </header>
 
         <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
-          <p className="font-rounded text-lg font-semibold leading-normal tracking-tight md:whitespace-nowrap md:text-2xl md:leading-normal">
+          <p className="glass inline-block rounded-[2.5rem] px-6 py-4 font-rounded text-lg font-semibold leading-normal tracking-tight sm:px-10 sm:py-5 md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
               <span className="inline-block w-24 border-b-2 border-primary/40 text-left align-baseline md:w-32">
