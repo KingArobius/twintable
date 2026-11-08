@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { restaurantMapsUrl, type GeocodedPlace } from "./restaurant-location";
+import { type GeocodedPlace } from "./restaurant-location";
 import { aiMatchesSchema, recommendationCacheKey } from "./recommendation-cache";
+import { MAX_RECOMMENDATION_CANDIDATES, verifyRecommendationCandidates } from "./verified-recommendations";
 
 export type Recommendation = {
   name: string;
@@ -39,7 +40,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { generateMessage, GatewayError } = await import("@lovable.dev/ai-gateway");
-    const prompt = `Find 6 distinct real restaurants in ${data.city} most similar to "${data.restaurant}". Rank best overall match first. Rate similarity from 1 to 5 in half-star increments: food (cuisine and dishes), ambiance (vibe and decor), service (service style), overall. Price is 1-4 ($-$$$$). Use your independent knowledge, not Google review scores. Return only compact JSON: {"results":[{"name":"Restaurant name","price":2,"ratings":{"food":4.5,"ambiance":4,"service":4,"overall":4}}]}. No addresses, descriptions, reference text, cuisine labels, neighborhoods, or menu scores.`;
+    const prompt = `Find up to ${MAX_RECOMMENDATION_CANDIDATES} distinct real, currently operating restaurants in ${data.city} most similar to "${data.restaurant}". Include extra candidates so we can select six after Google business verification. Never invent a local branch or include a known closed venue; return fewer if you do not know enough real restaurants. Rank best overall match first. Rate similarity from 1 to 5 in half-star increments: food (cuisine and dishes), ambiance (vibe and decor), service (service style), overall. Price is 1-4 ($-$$$$). Use your independent knowledge, not Google review scores. Return only compact JSON: {"results":[{"name":"Restaurant name","price":2,"ratings":{"food":4.5,"ambiance":4,"service":4,"overall":4}}]}. No addresses, descriptions, reference text, cuisine labels, neighborhoods, or menu scores.`;
     try {
       const { readCachedMatches, writeCachedMatches } = await import("./recommendation-cache.server");
       const cacheKey = await recommendationCacheKey(data);
@@ -61,28 +62,11 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
       }
       const { findRestaurantBusiness } = await import("./google-locations.server");
       const cityLoc = await geocodeCity(data.city);
-      const lookups = new Map<string, ReturnType<typeof findRestaurantBusiness>>();
-      const results = await Promise.all(
-        parsed.results.slice(0, 6).map(async (r) => {
-          const name = r.name.trim().slice(0, 120);
-          const key = name.toLowerCase();
-          let lookup = lookups.get(key);
-          if (!lookup) {
-            lookup = findRestaurantBusiness(name, data.cityName, cityLoc, data.city);
-            lookups.set(key, lookup);
-          }
-          const loc = await lookup;
-          return {
-            ...r,
-            lat: loc?.lat,
-            lng: loc?.lng,
-            address: loc?.address,
-            placeId: loc?.placeId,
-            website: loc?.website,
-            mapsUrl: restaurantMapsUrl(r.name, loc?.address ?? data.city, loc?.placeId),
-          };
-        }),
+      const results = await verifyRecommendationCandidates(
+        parsed.results,
+        (name) => findRestaurantBusiness(name, data.cityName, cityLoc, data.city),
       );
+      if (results.length === 0) return { ok: false as const, error: "No open restaurants could be verified for this search. Please try another restaurant or city." };
       return { ok: true as const, reference: "", results, cityLat: cityLoc?.lat, cityLng: cityLoc?.lng, cached };
     } catch (e) {
       console.error(e);

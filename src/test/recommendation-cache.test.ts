@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-start", () => ({ createServerFn: () => {
 vi.mock("@/lib/recommendation-cache.server", () => ({
   readCachedMatches: vi.fn(), writeCachedMatches: vi.fn(),
 }));
-vi.mock("@/lib/google-locations.server", () => ({ findRestaurantBusiness: vi.fn().mockResolvedValue(null) }));
+vi.mock("@/lib/google-locations.server", () => ({ findRestaurantBusiness: vi.fn().mockResolvedValue({ lat: 30.2, lng: -97.7, address: "123 Main St, Austin", placeId: "test-bbq" }) }));
 vi.mock("@lovable.dev/ai-gateway", () => ({
   generateMessage: vi.fn().mockResolvedValue({ content: [{ type: "text", text: JSON.stringify(matches) }] }),
   GatewayError: class extends Error {},
@@ -35,6 +35,7 @@ describe("Recommendation cost controls", () => {
     const { recommendRestaurants } = await import("@/lib/recommend.functions");
     const result = await recommendRestaurants({ data: { restaurant: "Franklin BBQ", city: "Austin, Texas", cityName: "Austin" } });
     expect(result.ok).toBe(true);
+    if (result.ok) expect(result.results.map((r) => r.placeId)).toEqual(["test-bbq"]);
     expect(generateMessage).not.toHaveBeenCalled();
     expect(findRestaurantBusiness).toHaveBeenCalledWith("Test BBQ", "Austin", { lat: 30.2, lng: -97.7 }, "Austin, Texas");
     vi.unstubAllGlobals();

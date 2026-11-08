@@ -35,6 +35,7 @@ use the editor.
 - Normalize punctuation and generic restaurant descriptors when matching Google business names; search with the full destination context and validate the area separately (matching locality/sublocality or within a metro radius of the geocoded city center) so neighborhood-filed venues pin while wrong-city branches do not.
 - Restaurant searches and autocomplete are public without sign-in; keep paid API credentials server-only and preserve cross-site request protection, six-result caps, name deduplication, and concurrency at six or below.
 - Cache only validated, independently generated AI matches in a server-only database table with hashed normalized keys and expiry; refresh Google location data per search and fail open on cache errors to preserve availability.
+- Request a bounded surplus of AI candidates, then fill at most six result slots using only Google-validated OPERATIONAL businesses; deduplicate names and place IDs, keep lookup concurrency at six or below, and version cache keys when candidate generation changes so stale shortlists are not reused.
 - Maintain router-derived sitemap inclusion with explicit staticData decisions on every route; omit lastmod unless an authoritative page-specific content timestamp exists.
 - Use native route head metadata and validated query parameters for reproducible searches; never add Helmet or an index.html entry to this TanStack app.
 - Keep reservation affiliate configuration in one shared URL helper; preserve validated Google website links outside the AI cache.

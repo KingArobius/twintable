@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { restaurantBusinessLocation, type BusinessPlace } from "@/lib/restaurant-location";
 
 const venue: BusinessPlace = {
-  id: "kashiba-seattle", displayName: { text: "Sushi Kashiba" }, types: ["japanese_restaurant"],
+  id: "kashiba-seattle", displayName: { text: "Sushi Kashiba" }, types: ["japanese_restaurant"], businessStatus: "OPERATIONAL",
   formattedAddress: "86 Pine St, Seattle, WA 98101", location: { latitude: 47.6103, longitude: -122.3425 },
   addressComponents: [{ longText: "Seattle", types: ["locality"] }],
 };

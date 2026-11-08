@@ -17,7 +17,7 @@ vi.mock("@lovable.dev/ai-gateway", () => ({
   }),
   GatewayError: class extends Error {},
 }));
-vi.mock("@/lib/google-locations.server", () => ({ findRestaurantBusiness: vi.fn() }));
+vi.mock("@/lib/google-locations.server", () => ({ findRestaurantBusiness: vi.fn().mockResolvedValue({ lat: 30.2, lng: -97.7, address: "123 Main St, Austin", placeId: "test-bbq" }) }));
 vi.mock("@/lib/recommendation-cache.server", () => ({ readCachedMatches: vi.fn().mockResolvedValue(null), writeCachedMatches: vi.fn() }));
 
 describe("Public restaurant search", () => {
