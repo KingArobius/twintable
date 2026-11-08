@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
 import foodSpread from "@/assets/food-spread.jpg";
+import shareImage from "@/assets/twin-table-share.jpg.asset.json";
 import { ResultsMap } from "@/components/ResultsMap";
 import { Button } from "@/components/ui/button";
 import type { PlaceSuggestion } from "@/lib/places.functions";
@@ -13,9 +14,12 @@ export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
   head: () => ({
     meta: [
-      { title: "Twin Table — Find restaurants like your favorite" },
+      { title: "Twin Table — Familiar food, unfamiliar places" },
       { name: "description", content: "Familiar food, unfamiliar places" },
-      { property: "og:title", content: "Twin Table — Find restaurants like your favorite" },
+      { property: "og:title", content: "Familiar food, unfamiliar places" },
+      { name: "twitter:title", content: "Familiar food, unfamiliar places" },
+      { property: "og:image", content: `https://twintable.app${shareImage.url}` },
+      { name: "twitter:image", content: `https://twintable.app${shareImage.url}` },
       { property: "og:description", content: "Familiar food, unfamiliar places" },
       { name: "twitter:description", content: "Familiar food, unfamiliar places" },
       { property: "og:type", content: "website" },
