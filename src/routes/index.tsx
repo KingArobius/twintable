@@ -39,13 +39,13 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
   ["menu", "Menu & format"],
 ];
 
-type SortKey = "overall" | "food" | "ambiance" | "service" | "menu" | "price";
+type SortKey = "rank" | "overall" | "food" | "ambiance" | "service" | "menu" | "price";
 type SortDir = "asc" | "desc";
 
 export function sortResults(list: Recommendation[], key: SortKey, dir: SortDir): Recommendation[] {
   const sign = dir === "asc" ? 1 : -1;
   return [...list].sort((a, b) => {
-    const diff = key === "price" ? a.price - b.price : a.ratings[key] - b.ratings[key];
+    const diff = key === "price" ? a.price - b.price : key === "rank" ? list.indexOf(a) - list.indexOf(b) : a.ratings[key] - b.ratings[key];
     return sign * diff || b.ratings.overall - a.ratings.overall;
   });
 }
@@ -59,7 +59,7 @@ function Index() {
       setSortDir((d) => (d === "desc" ? "asc" : "desc"));
     } else {
       setSortKey(key);
-      setSortDir(key === "price" ? "asc" : "desc");
+      setSortDir(key === "price" || key === "rank" ? "asc" : "desc");
     }
   }
   const recommend = useServerFn(recommendRestaurants);
@@ -147,7 +147,16 @@ function Index() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-primary/10 bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
-                    <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">#</th>
+                    <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("rank")}
+                        aria-sort={sortKey === "rank" ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
+                        className={`uppercase tracking-wider hover:text-foreground ${sortKey === "rank" ? "text-foreground" : ""}`}
+                      >
+                        #{sortKey === "rank" ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
+                      </button>
+                    </th>
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
                     {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
                       <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
@@ -157,7 +166,7 @@ function Index() {
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                           className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          <span className="sm:hidden">{{ price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
+                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
                           <span className="hidden sm:inline">{label}</span>
                           {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </button>
