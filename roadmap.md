@@ -1,4 +1,9 @@
 # Roadmap
+- [ ] Replace author/social branding and sharing image; preserve custom favicon and add Apple icon
+- [ ] Verify Lovable badge is hidden
+- [ ] Make searches reproducible from URLs with dynamic result metadata
+- [ ] Add Share and Share on X controls with copy confirmation
+- [ ] Add mobile-friendly directions, website, and reservation actions with optional affiliate configuration
 - [x] Create and verify blurred food previews with TWIN TABLE for social sharing and browser icon
 - [x] Replace the shared-link headline with Familiar food, unfamiliar places
 - [x] Set homepage search and social descriptions to the requested wording
