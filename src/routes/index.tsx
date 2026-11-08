@@ -99,7 +99,7 @@ function Index() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-16 text-foreground">
+    <main className="min-h-screen px-4 py-16 text-foreground">
       <div className="mx-auto max-w-4xl">
         <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
           <img
@@ -107,7 +107,7 @@ function Index() {
             alt=""
             width={1536}
             height={640}
-            className="h-full w-full object-cover opacity-25"
+            className="h-full w-full object-cover opacity-35"
           />
         </div>
         <header className="text-center">
