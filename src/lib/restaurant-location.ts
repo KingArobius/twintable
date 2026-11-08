@@ -32,6 +32,12 @@ export function restaurantMapsUrl(name: string, address: string, placeId?: strin
   return `https://www.google.com/maps/search/?${params}`;
 }
 
+// Retry the same name + destination search visitors open from the Maps icon,
+// without the initial restaurant-category wording or proximity bias.
+export function restaurantLocationQueries(name: string, searchArea: string) {
+  return [`${name} restaurant in ${searchArea}`, `${name}, ${searchArea}`];
+}
+
 export type BusinessPlace = {
   id?: string;
   displayName?: { text?: string };

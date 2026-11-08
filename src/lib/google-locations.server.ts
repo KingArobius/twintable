@@ -1,9 +1,11 @@
-import { restaurantBusinessLocation, type BusinessPlace } from "./restaurant-location";
+import { restaurantBusinessLocation, restaurantLocationQueries, type BusinessPlace } from "./restaurant-location";
 
 export async function findRestaurantBusiness(name: string, city: string, center: { lat: number; lng: number } | null, searchArea = city) {
   const lk = process.env["LOVABLE_API_KEY"];
   const gk = process.env["GOOGLE_MAPS_API_KEY"];
   if (!lk || !gk) throw new Error("Google restaurant lookup isn't configured.");
+  const queries = restaurantLocationQueries(name, searchArea);
+  for (const [attempt, textQuery] of queries.entries()) {
   const response = await fetch("https://connector-gateway.lovable.dev/google_maps/places/v1/places:searchText", {
     method: "POST",
     headers: {
@@ -11,8 +13,8 @@ export async function findRestaurantBusiness(name: string, city: string, center:
       "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.businessStatus,places.addressComponents,places.websiteUri",
     },
     body: JSON.stringify({
-      textQuery: `${name} restaurant in ${searchArea}`, pageSize: 6,
-      ...(center ? { locationBias: { circle: { center: { latitude: center.lat, longitude: center.lng }, radius: 25000 } } } : {}),
+      textQuery, pageSize: 6,
+      ...(attempt === 0 && center ? { locationBias: { circle: { center: { latitude: center.lat, longitude: center.lng }, radius: 25000 } } } : {}),
     }),
   });
   if (!response.ok) {
@@ -31,5 +33,8 @@ export async function findRestaurantBusiness(name: string, city: string, center:
     throw new Error(`Google restaurant lookup failed [${response.status}]: ${body}`);
   }
   const json = await response.json() as { places?: BusinessPlace[] };
-  return restaurantBusinessLocation(json.places ?? [], name, city, center);
+  const location = restaurantBusinessLocation(json.places ?? [], name, city, center);
+  if (location) return location;
+  }
+  return null;
 }
