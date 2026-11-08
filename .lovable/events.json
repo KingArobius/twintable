@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "events": {
+    "project.restaurant_search_completed": {
+      "event_schema_version": 1,
+      "description": "A search on the published Twin Table site returned a ranked restaurant list; excludes localhost and editor preview searches.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cached",
+          "result_count"
+        ],
+        "properties": {
+          "cached": {
+            "type": "boolean"
+          },
+          "result_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          }
+        }
+      }
+    }
+  }
+}
