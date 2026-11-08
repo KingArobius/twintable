@@ -204,7 +204,7 @@ function Index() {
             <div className="glass overflow-x-auto rounded-3xl">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                  <tr className="bg-primary/5 text-center text-[8px] uppercase tracking-normal text-muted-foreground sm:text-xs sm:tracking-wider">
                     <th rowSpan={2} className="border-b border-primary/10 px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                       <button
                         type="button"
@@ -229,7 +229,7 @@ function Index() {
                     <th colSpan={4} className="px-0.5 py-1.5 font-medium sm:px-4 sm:py-2">Similarity Scores</th>
                     <th rowSpan={2} className="border-b border-primary/10 px-1 sm:px-3"><span className="sr-only">Restaurant actions</span></th>
                   </tr>
-                  <tr className="border-b border-primary/10 bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                  <tr className="border-b border-primary/10 bg-primary/5 text-center text-[8px] uppercase tracking-normal text-muted-foreground sm:text-xs sm:tracking-wider">
                     {([["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
                       <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                         <button
@@ -252,7 +252,7 @@ function Index() {
                       <td className="px-0.5 py-2 sm:px-4 sm:py-4">
                         <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary font-mono text-[10px] font-bold text-primary-foreground shadow-sm shadow-primary/30 sm:h-7 sm:w-7 sm:text-xs">{r.rank}</span>
                       </td>
-                      <td className="w-16 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
+                      <td className="w-12 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="block text-center font-display text-[10px] leading-tight underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-lg">{r.name}</a>
                       </td>
                       <td className="whitespace-nowrap px-0.5 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
