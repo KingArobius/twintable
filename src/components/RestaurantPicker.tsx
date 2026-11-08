@@ -81,7 +81,6 @@ export function RestaurantPicker({
         placeholder={placeholder}
         className="w-full rounded-xl bg-transparent px-1 py-0 leading-none outline-none focus:bg-muted"
       />
-      {value && <p className="px-4 pb-1 text-xs text-muted-foreground truncate">✓ {value.address}</p>}
       {open && !value && (items.length > 0 || msg) && (
         <ul role="listbox" className="absolute left-0 right-0 top-full z-20 mt-2 min-w-72 overflow-hidden rounded-xl border bg-popover font-sans text-base text-popover-foreground shadow-lg">
           {items.map((p, i) => (
