@@ -36,7 +36,6 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
   ["food", "Food"],
   ["ambiance", "Ambiance"],
   ["service", "Service"],
-  ["menu", "Menu & format"],
 ];
 
 type SortKey = "rank" | "overall" | "food" | "ambiance" | "service" | "menu" | "price";
@@ -168,7 +167,7 @@ function Index() {
                         Price{sortKey === "price" ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                       </button>
                     </th>
-                    <th colSpan={5} className="px-0.5 py-1.5 font-medium sm:px-4 sm:py-2">Similarity Scores</th>
+                    <th colSpan={4} className="px-0.5 py-1.5 font-medium sm:px-4 sm:py-2">Similarity Scores</th>
                   </tr>
                   <tr className="border-b border-primary/10 bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
                     {([["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
