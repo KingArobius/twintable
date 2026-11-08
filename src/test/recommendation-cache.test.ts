@@ -27,6 +27,7 @@ describe("Recommendation cost controls", () => {
     expect(parsed).toEqual(matches);
   });
   it("skips Claude on a cache hit but still refreshes Google locations", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ results: [{ geometry: { location: { lat: 30.2, lng: -97.7 } } }] }))));
     const { readCachedMatches } = await import("@/lib/recommendation-cache.server");
     const { generateMessage } = await import("@lovable.dev/ai-gateway");
     const { findRestaurantBusiness } = await import("@/lib/google-locations.server");
@@ -35,6 +36,7 @@ describe("Recommendation cost controls", () => {
     const result = await recommendRestaurants({ data: { restaurant: "Franklin BBQ", city: "Austin, Texas", cityName: "Austin" } });
     expect(result.ok).toBe(true);
     expect(generateMessage).not.toHaveBeenCalled();
-    expect(findRestaurantBusiness).toHaveBeenCalledWith("Test BBQ", "Austin", null);
+    expect(findRestaurantBusiness).toHaveBeenCalledWith("Test BBQ", "Austin", { lat: 30.2, lng: -97.7 });
+    vi.unstubAllGlobals();
   });
 });
