@@ -94,10 +94,19 @@ function Index() {
           <p className="mt-4 text-muted-foreground">Name a restaurant you adore and a city — we'll find the closest matches there.</p>
         </header>
 
-        <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-2 rounded-2xl border bg-card p-2 shadow-sm md:flex-row md:items-start">
-          <RestaurantPicker value={place} onChange={setPlace} />
-          <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City (e.g. Chicago)" ariaLabel="City" emptyMessage="No matching cities found." className="md:border-l" />
-          <button disabled={loading} className="rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
+        <form onSubmit={onSubmit} className="mt-10 text-center">
+          <p className="font-display text-2xl leading-loose md:text-3xl md:leading-loose">
+            I'm looking for a restaurant in{" "}
+            <span className="inline-block min-w-40 border-b-2 border-primary/40 text-left align-baseline">
+              <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City" ariaLabel="City" emptyMessage="No matching cities found." />
+            </span>{" "}
+            similar to{" "}
+            <span className="inline-block min-w-48 border-b-2 border-primary/40 text-left align-baseline">
+              <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
+            </span>
+            .
+          </p>
+          <button disabled={loading} className="mt-6 rounded-xl bg-primary px-8 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
             {loading ? "Searching…" : "Search"}
           </button>
         </form>
