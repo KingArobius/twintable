@@ -79,10 +79,10 @@ export function RestaurantPicker({
           if (e.key === "Enter") { e.preventDefault(); const it = items[active]; if (it) pick(it); }
         }}
         placeholder={placeholder}
-        className="w-full rounded-xl bg-transparent px-1 py-0 leading-none outline-none focus:bg-muted"
+        className="w-full rounded-lg bg-transparent px-1 py-0 leading-none outline-none transition-colors focus:bg-primary/10"
       />
       {open && !value && (items.length > 0 || msg) && (
-        <ul role="listbox" className="absolute left-0 top-full z-20 mt-1.5 max-h-60 w-max min-w-56 max-w-80 overflow-y-auto rounded-2xl border border-primary/15 bg-popover p-1 font-sans text-sm text-popover-foreground shadow-xl shadow-primary/10 animate-in fade-in zoom-in-95 duration-150 max-sm:fixed max-sm:inset-x-4 max-sm:top-auto max-sm:w-auto max-sm:max-w-none">
+        <ul role="listbox" className="glass-popover absolute left-0 top-full z-20 mt-2 max-h-60 w-max min-w-56 max-w-80 overflow-y-auto rounded-2xl border border-primary/15 p-1.5 font-sans text-sm text-popover-foreground shadow-2xl shadow-primary/15 animate-in fade-in slide-in-from-top-1 zoom-in-95 duration-200 max-sm:fixed max-sm:inset-x-4 max-sm:top-auto max-sm:w-auto max-sm:max-w-none">
           {items.map((p, i) => (
             <li
               key={p.placeId}
