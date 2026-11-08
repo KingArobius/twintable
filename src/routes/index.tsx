@@ -126,7 +126,7 @@ function Index() {
                     <span className="font-medium">Overall match</span>
                     <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-sm">{r.ratings.overall}</span></span>
                   </div>
-                  <dl className="mt-2 space-y-1">
+                  <dl className="mt-2 grid gap-1 md:grid-cols-2 md:gap-x-10">
                     {LABELS.map(([k, label]) => (
                       <div key={k} className="flex items-center justify-between text-sm">
                         <dt className="text-muted-foreground">{label}</dt>
