@@ -118,8 +118,6 @@ function Index() {
 
         {data && (
           <section className="mt-12">
-            <p className="mb-6 text-center italic text-muted-foreground">{data.reference}</p>
-            <p className="mb-4 text-right text-sm text-muted-foreground">Click a column heading to sort</p>
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
