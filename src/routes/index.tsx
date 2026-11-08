@@ -118,14 +118,14 @@ function Index() {
           <p className="glass inline-block rounded-[2.5rem] px-3 py-3 font-rounded text-base font-semibold leading-normal tracking-tight sm:px-10 sm:py-5 sm:text-lg md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
-              <span className="inline-block w-24 border-b-2 border-primary/40 text-left align-baseline md:w-32">
-                <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City" ariaLabel="City" emptyMessage="No matching cities found." />
+              <span className="inline-block w-14 border-b-2 border-primary/40 text-left align-baseline md:w-16">
+                <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="city" ariaLabel="City" emptyMessage="No matching cities found." />
               </span>
             </span>{" "}
             <span className="block md:inline">
               similar to{" "}
-              <span className="inline-block w-28 border-b-2 border-primary/40 text-left align-baseline md:w-36">
-                <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
+              <span className="inline-block w-24 border-b-2 border-primary/40 text-left align-baseline md:w-28">
+                <RestaurantPicker value={place} onChange={setPlace} placeholder="restaurant" />
               </span>
               .
             </span>
