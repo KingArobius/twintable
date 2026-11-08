@@ -108,13 +108,8 @@ function Index() {
         {data && (
           <section className="mt-12">
             <p className="mb-6 text-center italic text-muted-foreground">{data.reference}</p>
-            <div className="mb-4 flex flex-wrap items-center justify-end gap-2 text-sm">
-              <label htmlFor="sort" className="text-muted-foreground">Sort by</label>
-              <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="rounded-lg border bg-card px-3 py-2">
-                {SORTS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
-              </select>
-            </div>
-            {(() => { const sorted = sortResults(data.results, sort); return (
+            <p className="mb-4 text-right text-sm text-muted-foreground">Click a column heading to sort</p>
+            {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <ResultsMap results={sorted} />
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
@@ -123,10 +118,17 @@ function Index() {
                   <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-3 font-medium">#</th>
                     <th className="px-4 py-3 font-medium">Restaurant</th>
-                    <th className="px-4 py-3 font-medium">Price</th>
-                    <th className="px-4 py-3 font-medium">Overall</th>
-                    {LABELS.map(([k, label]) => (
-                      <th key={k} className="px-4 py-3 font-medium">{label}</th>
+                    {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
+                      <th key={k} className="px-4 py-3 font-medium">
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(k)}
+                          aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
+                          className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
+                        >
+                          {label} {sortKey === k ? (sortDir === "asc" ? "↑" : "↓") : ""}
+                        </button>
+                      </th>
                     ))}
                   </tr>
                 </thead>
