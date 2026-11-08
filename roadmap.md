@@ -5,6 +5,6 @@
 - [x] Background color shifts to another color as you scroll (keep emerald family)
 - [x] Entry boxes initially sized to fit lowercase "city" / "restaurant" placeholders
 - [ ] Connect Yelp for live review scores
-- [ ] Resolve whether to use Claude with web search instead of provider APIs
-- [ ] Blend real Google and Yelp scores into overall rankings with source links
+- [x] Use direct Yelp and Google APIs rather than Claude web search
+- [ ] Replace AI similarity scores with real Google and Yelp ratings and a review-based overall ranking with source links
 - [ ] Test ranking and unavailable-review handling
