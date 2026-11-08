@@ -1,13 +1,17 @@
-import { Navigation, Globe, CalendarDays } from "lucide-react";
+import { Navigation, MapPin, Globe, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Recommendation } from "@/lib/recommend.functions";
 import { directionsUrl, reservationUrl, safeWebsite } from "@/lib/reservations";
+import { hasRestaurantCoordinates } from "@/lib/restaurant-location";
 
 export function RestaurantActions({ restaurant, city }: { restaurant: Recommendation; city: string }) {
   const website = safeWebsite(restaurant.website);
+  const located = hasRestaurantCoordinates(restaurant);
   const actions = [
-    { label: "Directions", href: directionsUrl(restaurant.name, restaurant.address ?? city, restaurant.placeId), Icon: Navigation },
+    located
+      ? { label: "Directions", href: directionsUrl(restaurant.name, restaurant.address ?? `${restaurant.lat},${restaurant.lng}`, restaurant.placeId), Icon: Navigation }
+      : { label: "Find on Google Maps", href: restaurant.mapsUrl, Icon: MapPin },
     ...(website ? [{ label: "Menu / Website", href: website, Icon: Globe }] : []),
     { label: "Reserve", href: reservationUrl(restaurant.name, city), Icon: CalendarDays },
   ];
