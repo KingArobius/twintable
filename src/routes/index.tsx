@@ -59,7 +59,7 @@ function Index() {
       setSortDir((d) => (d === "desc" ? "asc" : "desc"));
     } else {
       setSortKey(key);
-      setSortDir(key === "price" ? "asc" : "desc");
+      setSortDir(key === "price" || key === "rank" ? "asc" : "desc");
     }
   }
   const recommend = useServerFn(recommendRestaurants);
