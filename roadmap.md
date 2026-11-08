@@ -4,6 +4,8 @@
 - [x] Verify restyled results view with a real search
 - [x] Background color shifts to another color as you scroll (keep emerald family)
 - [x] Entry boxes initially sized to fit lowercase "city" / "restaurant" placeholders
+- [ ] Connect user's own Google Maps API key (GOOGLE_API_KEY) so the map works on twintable.app
+- [ ] Publish project so twintable.app goes live (publish was declined once — retry)
 - [ ] Connect Yelp for live review scores
 - [ ] Resolve whether to use Claude with web search instead of provider APIs
 - [ ] Blend real Google and Yelp scores into overall rankings with source links
