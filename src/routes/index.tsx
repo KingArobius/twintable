@@ -1,23 +1,119 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState, type FormEvent } from "react";
+import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Twin Table — Find restaurants like your favorite" },
+      { name: "description", content: "Search a restaurant and a city to discover similar spots, rated for food, ambiance and more." },
+      { property: "og:title", content: "Twin Table — Find restaurants like your favorite" },
+      { property: "og:description", content: "Discover restaurants similar to the ones you love, in any city." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Stars({ value }: { value: number }) {
+  const pct = Math.max(0, Math.min(5, value)) * 20;
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <span className="relative inline-block text-lg leading-none tracking-widest" aria-label={`${value} of 5`}>
+      <span className="text-border">★★★★★</span>
+      <span className="absolute inset-0 overflow-hidden text-primary" style={{ width: `${pct}%` }}>★★★★★</span>
+    </span>
+  );
+}
+
+const LABELS: [keyof Recommendation["ratings"], string][] = [
+  ["food", "Food"],
+  ["ambiance", "Ambiance"],
+  ["service", "Service"],
+  ["menu", "Menu & format"],
+];
+
+function Index() {
+  const recommend = useServerFn(recommendRestaurants);
+  const [restaurant, setRestaurant] = useState("");
+  const [city, setCity] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<{ reference: string; results: Recommendation[] } | null>(null);
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!restaurant.trim() || !city.trim()) return;
+    setLoading(true);
+    setError(null);
+    setData(null);
+    try {
+      const r = await recommend({ data: { restaurant, city } });
+      if (r.ok) setData({ reference: r.reference, results: r.results });
+      else setError(r.error);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-background px-4 py-16 text-foreground">
+      <div className="mx-auto max-w-4xl">
+        <header className="text-center">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
+          <h1 className="mt-3 font-display text-5xl md:text-6xl">Love a place? Find its twin.</h1>
+          <p className="mt-4 text-muted-foreground">Name a restaurant you adore and a city — we'll find the closest matches there.</p>
+        </header>
+
+        <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-2 rounded-2xl border bg-card p-2 shadow-sm md:flex-row">
+          <input value={restaurant} onChange={(e) => setRestaurant(e.target.value)} placeholder="Restaurant (e.g. Nobu)" className="flex-1 rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted" />
+          <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City (e.g. Chicago)" className="flex-1 rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted md:border-l" />
+          <button disabled={loading} className="rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
+            {loading ? "Searching…" : "Search"}
+          </button>
+        </form>
+
+        {loading && <p className="mt-10 text-center text-muted-foreground animate-pulse">Tasting the town…</p>}
+        {error && <p className="mt-10 text-center text-destructive">{error}</p>}
+
+        {data && (
+          <section className="mt-12">
+            <p className="mb-6 text-center italic text-muted-foreground">{data.reference}</p>
+            <div className="grid gap-5 md:grid-cols-2">
+              {data.results.map((r) => (
+                <article key={r.name} className="rounded-2xl border bg-card p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h2 className="font-display text-2xl">{r.name}</h2>
+                      <p className="text-sm text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
+                    </div>
+                    <span className="font-mono text-lg">
+                      <span className="text-primary">{"$".repeat(r.price)}</span>
+                      <span className="text-border">{"$".repeat(4 - r.price)}</span>
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm">{r.summary}</p>
+                  <div className="mt-4 flex items-center justify-between border-t pt-4">
+                    <span className="font-medium">Overall match</span>
+                    <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-sm">{r.ratings.overall}</span></span>
+                  </div>
+                  <dl className="mt-2 space-y-1">
+                    {LABELS.map(([k, label]) => (
+                      <div key={k} className="flex items-center justify-between text-sm">
+                        <dt className="text-muted-foreground">{label}</dt>
+                        <dd><Stars value={r.ratings[k]} /></dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </main>
   );
 }
