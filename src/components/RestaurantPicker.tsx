@@ -79,7 +79,7 @@ export function RestaurantPicker({
           if (e.key === "Enter") { e.preventDefault(); const it = items[active]; if (it) pick(it); }
         }}
         placeholder={placeholder}
-        className="w-full rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted"
+        className="w-full rounded-xl bg-transparent px-2 py-1 outline-none focus:bg-muted"
       />
       {value && <p className="px-4 pb-1 text-xs text-muted-foreground truncate">✓ {value.address}</p>}
       {open && !value && (items.length > 0 || msg) && (

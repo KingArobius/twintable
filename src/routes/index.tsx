@@ -93,16 +93,20 @@ function Index() {
         </header>
 
         <form onSubmit={onSubmit} className="mt-10 text-center">
-          <p className="whitespace-nowrap font-cursive text-xl leading-loose md:text-2xl md:leading-loose">
-            I'm looking for a restaurant in{" "}
-            <span className="inline-block min-w-56 border-b-2 border-primary/40 text-left align-baseline">
-              <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City" ariaLabel="City" emptyMessage="No matching cities found." />
+          <p className="font-cursive text-lg leading-loose md:whitespace-nowrap md:text-2xl md:leading-loose">
+            <span className="block md:inline">
+              I'm looking for a restaurant in{" "}
+              <span className="inline-block w-24 border-b-2 border-primary/40 text-left align-baseline md:w-32">
+                <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City" ariaLabel="City" emptyMessage="No matching cities found." />
+              </span>
             </span>{" "}
-            similar to{" "}
-            <span className="inline-block min-w-72 border-b-2 border-primary/40 text-left align-baseline">
-              <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
+            <span className="block md:inline">
+              similar to{" "}
+              <span className="inline-block w-28 border-b-2 border-primary/40 text-left align-baseline md:w-36">
+                <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
+              </span>
+              .
             </span>
-            .
           </p>
           <button disabled={loading} className="mt-6 rounded-xl bg-primary px-8 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
             {loading ? "Searching…" : "Search"}
