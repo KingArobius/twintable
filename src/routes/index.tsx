@@ -213,7 +213,7 @@ function Index() {
                 </tbody>
               </table>
             </div>
-            <ResultsMap results={data.results} />
+            <ResultsMap results={data.results} cityLat={data.cityLat} cityLng={data.cityLng} />
             </>
             ); })()}
           </section>
