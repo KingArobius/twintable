@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { exactRestaurantLocation, restaurantMapsUrl, type GeocodedPlace } from "./restaurant-location";
+import { restaurantMapsUrl, type GeocodedPlace } from "./restaurant-location";
+
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export type Recommendation = {
   name: string;
@@ -15,30 +17,6 @@ export type Recommendation = {
   address?: string | undefined;
   placeId?: string | undefined;
 };
-
-async function geocode(name: string, address: string | undefined, city: string) {
-  const lk = process.env["LOVABLE_API_KEY"];
-  const gk = process.env["GOOGLE_MAPS_API_KEY"];
-  if (!lk || !gk || !address?.trim()) return null;
-  try {
-    const res = await fetch(
-      `https://connector-gateway.lovable.dev/google_maps/maps/api/geocode/json?address=${encodeURIComponent(`${name}, ${address}, ${city}`)}`,
-      { headers: { Authorization: `Bearer ${lk}`, "X-Connection-Api-Key": gk } },
-    );
-    if (!res.ok) {
-      const body = await res.text();
-      console.error(`Google location lookup failed [${res.status}]: ${body}`);
-      if (res.status === 403) throw new Error("Google Maps denied the location lookup. Check the server key's API and application restrictions in Google Cloud Console.");
-      throw new Error(`Google location lookup failed [${res.status}]: ${body}`);
-    }
-    const json = (await res.json()) as { status?: string; error_message?: string; results?: GeocodedPlace[] };
-    if (json.status && !["OK", "ZERO_RESULTS"].includes(json.status)) throw new Error(`Google location lookup failed: ${json.status} ${json.error_message ?? ""}`);
-    return exactRestaurantLocation(json.results ?? []);
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
 
 async function geocodeCity(city: string) {
   const lk = process.env["LOVABLE_API_KEY"];
@@ -59,8 +37,9 @@ async function geocodeCity(city: string) {
 }
 
 export const recommendRestaurants = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
-    z.object({ restaurant: z.string().trim().min(1).max(120), city: z.string().trim().min(1).max(120) }).parse(d),
+    z.object({ restaurant: z.string().trim().min(1).max(120), city: z.string().trim().min(1).max(120), cityName: z.string().trim().min(1).max(120) }).parse(d),
   )
   .handler(async ({ data }) => {
     const { generateMessage, GatewayError } = await import("@lovable.dev/ai-gateway");
@@ -77,10 +56,19 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
         .join("");
       const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
       const parsed = JSON.parse(json) as { reference: string; results: Recommendation[] };
+      const { findRestaurantBusiness } = await import("./google-locations.server");
       const cityLoc = await geocodeCity(data.city);
+      const lookups = new Map<string, ReturnType<typeof findRestaurantBusiness>>();
       const results = await Promise.all(
         parsed.results.slice(0, 6).map(async (r) => {
-          const loc = await geocode(r.name, r.address, data.city);
+          const name = r.name.trim().slice(0, 120);
+          const key = name.toLowerCase();
+          let lookup = lookups.get(key);
+          if (!lookup) {
+            lookup = findRestaurantBusiness(name, data.cityName, cityLoc);
+            lookups.set(key, lookup);
+          }
+          const loc = await lookup;
           return {
             ...r,
             lat: loc?.lat,
@@ -94,7 +82,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
       return { ok: true as const, reference: parsed.reference, results, cityLat: cityLoc?.lat, cityLng: cityLoc?.lng };
     } catch (e) {
       console.error(e);
-      const msg = e instanceof GatewayError ? "The AI service is busy or unavailable. Please try again." : "Couldn't read the recommendations. Please try again.";
+      const msg = e instanceof GatewayError ? "The AI service is busy or unavailable. Please try again." : e instanceof Error && e.message.startsWith("Google") ? e.message : "Couldn't read the recommendations. Please try again.";
       return { ok: false as const, error: msg };
     }
   });
