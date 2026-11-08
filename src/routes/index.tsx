@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState, type FormEvent } from "react";
 import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
+import foodSpread from "@/assets/food-spread.jpg";
 import { ResultsMap } from "@/components/ResultsMap";
 import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
@@ -102,6 +103,15 @@ function Index() {
       <div className="mx-auto max-w-4xl">
         <header className="text-center">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
+          <div className="glass mt-6 overflow-hidden rounded-3xl">
+            <img
+              src={foodSpread}
+              alt="A table spread with tacos, burgers, ramen, salads, dumplings and pizza"
+              width={1536}
+              height={640}
+              className="h-40 w-full object-cover sm:h-64"
+            />
+          </div>
         </header>
 
         <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
