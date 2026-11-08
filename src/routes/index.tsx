@@ -136,7 +136,9 @@ function Index() {
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                           className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          {label} {sortKey === k ? (sortDir === "asc" ? "↑" : "↓") : ""}
+                          <span className="sm:hidden">{{ price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
+                          <span className="hidden sm:inline">{label}</span>
+                          {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </button>
                       </th>
                     ))}
@@ -148,7 +150,7 @@ function Index() {
                       <td className="px-1 py-2 sm:px-4 sm:py-4">
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
                       </td>
-                      <td className="max-w-20 px-1 py-2 sm:max-w-none sm:px-4 sm:py-4">
+                      <td className="max-w-16 px-1 py-2 sm:max-w-none sm:px-4 sm:py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="block truncate font-display text-xs hover:underline sm:text-lg">{r.name}</a>
                       </td>
                       <td className="whitespace-nowrap px-1 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
