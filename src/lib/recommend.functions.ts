@@ -8,8 +8,8 @@ export type Recommendation = {
   price: 1 | 2 | 3 | 4;
   summary: string;
   ratings: { food: number; ambiance: number; service: number; menu: number; overall: number };
-  lat?: number;
-  lng?: number;
+  lat?: number | undefined;
+  lng?: number | undefined;
   mapsUrl: string;
 };
 
