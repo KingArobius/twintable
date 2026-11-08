@@ -4,3 +4,6 @@
 - [x] Verify restyled results view with a real search
 - [x] Background color shifts to another color as you scroll (keep emerald family)
 - [x] Entry boxes initially sized to fit lowercase "city" / "restaurant" placeholders
+- [ ] Connect Yelp for live review scores
+- [ ] Blend real Google and Yelp scores into overall rankings with source links
+- [ ] Test ranking and unavailable-review handling
