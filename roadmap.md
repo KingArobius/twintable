@@ -1,12 +1,5 @@
 # Roadmap
 
-- [x] Make the entry boxes (City / Restaurant fields) smaller
-- [x] Make the sentence text more cursive (swapped to Dancing Script)
-- [x] Two-line mobile layout with fields at end of each line
-- [x] Remove the "✓ address" confirmation text shown after picking a city/restaurant
-- [x] Prettier search button (emerald gradient pill) and background (soft emerald glow)
-- [x] Remove the 3-word reference line and the "Click a column heading to sort" hint
-- [x] Make restaurant names in the table smaller so they fit on mobile
-- [x] Smaller, prettier autocomplete dropdown that fits mobile screens
-- [x] Center table text and rank numbers horizontally and vertically
-- [x] Eliminate scrolling on mobile results view (tightened spacing, shorter map)
+- [x] Modernize UI (glass surfaces, gradient button, refined table/dropdown/map)
+- [ ] Verify restyled results view with a real search
+- [ ] Background color shifts to another color as you scroll (keep emerald family)
