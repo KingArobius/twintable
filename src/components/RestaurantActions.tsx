@@ -1,13 +1,28 @@
 import { Navigation, Globe, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Recommendation } from "@/lib/recommend.functions";
 import { directionsUrl, reservationUrl, safeWebsite } from "@/lib/reservations";
 
 export function RestaurantActions({ restaurant, city }: { restaurant: Recommendation; city: string }) {
   const website = safeWebsite(restaurant.website);
-  return <div className="flex flex-wrap justify-center gap-2 py-1">
-    <Button asChild variant="outline" size="sm" className="h-9"><a href={directionsUrl(restaurant.name, restaurant.address ?? city, restaurant.placeId)} target="_blank" rel="noopener noreferrer"><Navigation />Directions</a></Button>
-    {website && <Button asChild variant="outline" size="sm" className="h-9"><a href={website} target="_blank" rel="noopener noreferrer"><Globe />Menu / Website</a></Button>}
-    <Button asChild variant="outline" size="sm" className="h-9"><a href={reservationUrl(restaurant.name, city)} target="_blank" rel="noopener noreferrer"><CalendarDays />Reserve</a></Button>
-  </div>;
+  const actions = [
+    { label: "Directions", href: directionsUrl(restaurant.name, restaurant.address ?? city, restaurant.placeId), Icon: Navigation },
+    ...(website ? [{ label: "Menu / Website", href: website, Icon: Globe }] : []),
+    { label: "Reserve", href: reservationUrl(restaurant.name, city), Icon: CalendarDays },
+  ];
+  return <TooltipProvider delayDuration={200}>
+    <div className="flex justify-end gap-1 py-1">
+      {actions.map(({ label, href, Icon }) => (
+        <Tooltip key={label}>
+          <TooltipTrigger asChild>
+            <Button asChild variant="ghost" size="icon" className="size-7 shrink-0 text-primary sm:size-9">
+              <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${label} for ${restaurant.name}`}><Icon className="size-3.5 sm:size-4" aria-hidden="true" /></a>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{label}</TooltipContent>
+        </Tooltip>
+      ))}
+    </div>
+  </TooltipProvider>;
 }
