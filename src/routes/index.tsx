@@ -102,7 +102,7 @@ function Index() {
             </span>{" "}
             <span className="block md:inline">
               similar to{" "}
-              <span className="inline-block min-w-52 border-b-2 border-primary/40 text-left align-baseline">
+              <span className="inline-block min-w-44 border-b-2 border-primary/40 text-left align-baseline">
                 <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
               </span>
               .
