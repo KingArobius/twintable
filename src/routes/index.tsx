@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState, type FormEvent } from "react";
 import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
-import foodSpreadBlue from "@/assets/food-spread-blue.jpg";
+import foodSpread from "@/assets/food-spread.jpg";
 import { ResultsMap } from "@/components/ResultsMap";
 import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
@@ -103,11 +103,11 @@ function Index() {
       <div className="mx-auto max-w-4xl">
         <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
           <img
-            src={foodSpreadBlue}
+            src={foodSpread}
             alt=""
             width={1536}
             height={640}
-            className="h-full w-full object-cover opacity-35"
+            className="h-full w-full scale-105 object-cover opacity-40 blur-md"
           />
         </div>
         <header className="text-center">
