@@ -1,11 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export type PlaceSuggestion = { placeId: string; name: string; address: string };
 
 export const autocompleteRestaurants = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z.object({ input: z.string().trim().min(2).max(100), sessionToken: z.string().uuid(), types: z.array(z.string()).optional() }).parse(d),
   )

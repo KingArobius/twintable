@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { restaurantMapsUrl, type GeocodedPlace } from "./restaurant-location";
 
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export type Recommendation = {
   name: string;
@@ -37,7 +36,6 @@ async function geocodeCity(city: string) {
 }
 
 export const recommendRestaurants = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z.object({ restaurant: z.string().trim().min(1).max(120), city: z.string().trim().min(1).max(120), cityName: z.string().trim().min(1).max(120) }).parse(d),
   )

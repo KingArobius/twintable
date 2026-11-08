@@ -1,7 +1,7 @@
 # Roadmap
 
 - [x] Use Google Places business listings for restaurant addresses and stable pins
-- [x] Protect paid Google lookups with sign-in and verify location matching tests
+- [x] Allow restaurant searches without sign-in while retaining server-only credentials and location matching checks
 
 - [x] Modernize UI (glass surfaces, gradient button, refined table/dropdown/map)
 - [x] Verify restyled results view with a real search
