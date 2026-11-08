@@ -65,7 +65,7 @@ export function RestaurantPicker({
           if (!open || !items.length) return;
           if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => (a + 1) % items.length); }
           if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => (a - 1 + items.length) % items.length); }
-          if (e.key === "Enter") { e.preventDefault(); pick(items[active]); }
+          if (e.key === "Enter") { e.preventDefault(); const it = items[active]; if (it) pick(it); }
         }}
         placeholder="Restaurant (e.g. Nobu)"
         className="w-full rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted"
