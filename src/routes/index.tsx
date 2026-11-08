@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
+import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
 import { ResultsMap } from "@/components/ResultsMap";
 import type { PlaceSuggestion } from "@/lib/places.functions";
@@ -92,7 +93,7 @@ function Index() {
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
         </header>
 
-        <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
+        <form onSubmit={onSubmit} className="glass mt-6 rounded-3xl px-4 py-6 text-center sm:mt-10 sm:px-10 sm:py-8">
           <p className="font-cursive text-lg leading-normal md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
@@ -108,7 +109,8 @@ function Index() {
               .
             </span>
           </p>
-          <button disabled={loading} className="mt-6 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0">
+          <button disabled={loading} className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary-foreground/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0">
+            <Sparkles className="h-4 w-4" />
             {loading ? "Searching…" : "Search"}
           </button>
         </form>
@@ -117,13 +119,13 @@ function Index() {
         {error && <p className="mt-10 text-center text-destructive">{error}</p>}
 
         {data && (
-          <section className="mt-6 sm:mt-12">
+          <section className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500 sm:mt-12">
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
-            <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
+            <div className="glass overflow-x-auto rounded-3xl">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                  <tr className="border-b border-primary/10 bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">#</th>
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
                     {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
@@ -144,12 +146,12 @@ function Index() {
                 </thead>
                 <tbody>
                   {sorted.map((r, i) => (
-                    <tr key={r.name} className="border-b text-center align-middle last:border-0 hover:bg-muted/50">
+                    <tr key={r.name} className="border-b border-primary/8 text-center align-middle transition-colors last:border-0 hover:bg-primary/5">
                       <td className="px-0.5 py-2 sm:px-4 sm:py-4">
-                        <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
+                        <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary font-mono text-[10px] font-bold text-primary-foreground shadow-sm shadow-primary/30 sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
                       </td>
                       <td className="w-16 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
-                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="block text-center font-display text-[10px] leading-tight hover:underline sm:text-lg">{r.name}</a>
+                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="block text-center font-display text-[10px] leading-tight underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-lg">{r.name}</a>
                       </td>
                       <td className="whitespace-nowrap px-0.5 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
                         <span className="text-primary">{"$".repeat(r.price)}</span>
