@@ -69,7 +69,7 @@ function Index() {
   const [city, setCity] = useState<PlaceSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<{ reference: string; results: RankedRecommendation[]; cityLat?: number; cityLng?: number } | null>(null);
+  const [data, setData] = useState<{ reference: string; results: RankedRecommendation[]; cityLat?: number | undefined; cityLng?: number | undefined } | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
