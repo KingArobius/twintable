@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Fragment, useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
 import foodSpread from "@/assets/food-spread.jpg";
+import ogPreview from "@/assets/og-preview.mp4.asset.json";
 import { SearchShare } from "@/components/SearchShare";
 import { RestaurantActions } from "@/components/RestaurantActions";
 import { readSearchState, searchTitle, searchUrl, type SearchState } from "@/lib/search-sharing";
@@ -11,6 +12,8 @@ import { ResultsMap } from "@/components/ResultsMap";
 import { Button } from "@/components/ui/button";
 import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
+
+const ogVideoUrl = `https://twintable.app${ogPreview.url}`;
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
@@ -25,6 +28,11 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
       { property: "og:image", content: "https://twintable.app/og-image.png" },
       { name: "twitter:image", content: "https://twintable.app/og-image.png" },
+      { property: "og:video", content: ogVideoUrl },
+      { property: "og:video:secure_url", content: ogVideoUrl },
+      { property: "og:video:type", content: "video/mp4" },
+      { property: "og:video:width", content: "1200" },
+      { property: "og:video:height", content: "630" },
       { property: "og:description", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
       { name: "twitter:description", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
       { property: "og:url", content: searchUrl(loaderData?.search ?? {}) },
@@ -156,7 +164,11 @@ function Index() {
           />
         </div>
         <header className="text-center">
-          <h1 className="font-display text-3xl text-foreground">{search.restaurant && search.city ? `Restaurants like ${search.restaurant} in ${search.city}` : "Twin Table"}</h1>
+          {search.restaurant && search.city ? (
+            <h1 className="font-display text-3xl text-foreground">{`Restaurants like ${search.restaurant} in ${search.city}`}</h1>
+          ) : (
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
+          )}
         </header>
 
         <form onSubmit={onSubmit} className="glass mx-auto mt-6 block w-fit rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6 md:flex md:items-center md:gap-5 md:py-4">
@@ -192,7 +204,7 @@ function Index() {
             <div className="glass overflow-x-auto rounded-3xl">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                  <tr className="bg-primary/5 text-center text-[8px] uppercase tracking-normal text-muted-foreground sm:text-xs sm:tracking-wider">
                     <th rowSpan={2} className="border-b border-primary/10 px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                       <button
                         type="button"
@@ -215,8 +227,9 @@ function Index() {
                       </button>
                     </th>
                     <th colSpan={4} className="px-0.5 py-1.5 font-medium sm:px-4 sm:py-2">Similarity Scores</th>
+                    <th rowSpan={2} className="border-b border-primary/10 px-1 sm:px-3"><span className="sr-only">Restaurant actions</span></th>
                   </tr>
-                  <tr className="border-b border-primary/10 bg-primary/5 text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                  <tr className="border-b border-primary/10 bg-primary/5 text-center text-[8px] uppercase tracking-normal text-muted-foreground sm:text-xs sm:tracking-wider">
                     {([["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
                       <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                         <button
@@ -235,12 +248,11 @@ function Index() {
                 </thead>
                 <tbody>
                   {sorted.map((r) => (
-                    <Fragment key={r.name}>
-                    <tr className="text-center align-middle transition-colors hover:bg-primary/5">
+                    <tr key={r.name} className="border-b border-primary/10 text-center align-middle transition-colors last:border-0 hover:bg-primary/5">
                       <td className="px-0.5 py-2 sm:px-4 sm:py-4">
                         <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary font-mono text-[10px] font-bold text-primary-foreground shadow-sm shadow-primary/30 sm:h-7 sm:w-7 sm:text-xs">{r.rank}</span>
                       </td>
-                      <td className="w-16 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
+                      <td className="w-12 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="block text-center font-display text-[10px] leading-tight underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-lg">{r.name}</a>
                       </td>
                       <td className="whitespace-nowrap px-0.5 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
@@ -253,9 +265,8 @@ function Index() {
                       {LABELS.map(([k]) => (
                         <td key={k} className="whitespace-nowrap px-0.5 py-2 sm:px-4 sm:py-4"><Stars value={r.ratings[k]} /></td>
                       ))}
+                      <td className="px-1 py-2 sm:px-3 sm:py-4"><RestaurantActions restaurant={r} city={completedSearch?.city ?? search.city ?? ""} /></td>
                     </tr>
-                    <tr className="border-b border-primary/10 last:border-0"><td colSpan={7} className="px-2 pb-3"><RestaurantActions restaurant={r} city={completedSearch?.city ?? search.city ?? ""} /></td></tr>
-                    </Fragment>
                   ))}
                 </tbody>
               </table>
@@ -267,10 +278,6 @@ function Index() {
             ); })()}
           </section>
         )}
-        {!search.restaurant && <section className="mx-auto mt-12 max-w-2xl text-center">
-          <h2 className="font-display text-xl">Familiar food, unfamiliar places</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Find restaurants like your favorite, in any city. Twin Table compares food, ambiance, and service similarity, with price ranges from $ to $$$$.</p>
-        </section>}
       </div>
     </main>
   );

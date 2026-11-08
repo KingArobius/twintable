@@ -38,3 +38,4 @@ use the editor.
 - Use native route head metadata and validated query parameters for reproducible searches; never add Helmet or an index.html entry to this TanStack app.
 - Keep reservation affiliate configuration in one shared URL helper; preserve validated Google website links outside the AI cache.
 - Prerender only explicitly listed static pages; run arbitrary shared restaurant searches after hydration to avoid paid lookups during builds or crawler requests.
+- Reference the Apple Messages preview through an uploaded asset pointer in homepage video metadata, retaining the still image for other sharing clients.
