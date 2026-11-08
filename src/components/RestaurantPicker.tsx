@@ -61,7 +61,7 @@ export function RestaurantPicker({
 
   return (
     <div className={`relative inline-block ${className}`}>
-      <span aria-hidden className="invisible block whitespace-pre px-1 py-0 leading-none">{text ? `${text}\u00a0\u00a0` : placeholder}</span>
+      <span aria-hidden className="invisible block whitespace-pre px-1 py-0 leading-none">{`${text || placeholder}\u00a0\u00a0`}</span>
       <input
         value={text}
         role="combobox"

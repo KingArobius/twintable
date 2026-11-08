@@ -8,8 +8,6 @@ export const autocompleteRestaurants = createServerFn({ method: "POST" })
     z.object({ input: z.string().trim().min(2).max(100), sessionToken: z.string().uuid(), types: z.array(z.string()).optional() }).parse(d),
   )
   .handler(async ({ data }): Promise<{ suggestions: PlaceSuggestion[]; error?: string }> => {
-    const { requireVisitorSession } = await import("./visitor-session.server");
-    await requireVisitorSession();
     const lk = process.env["LOVABLE_API_KEY"];
     const gk = process.env["GOOGLE_MAPS_API_KEY"];
     if (!lk || !gk) return { suggestions: [], error: "Place lookup isn't configured." };

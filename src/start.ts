@@ -1,7 +1,6 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { visitorSession } from "./lib/visitor-session.server";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -25,14 +24,6 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
-const visitorMiddleware = createMiddleware().server(async ({ next, request }) => {
-  if (request.method === "GET" && request.headers.get("accept")?.includes("text/html")) {
-    const session = await visitorSession();
-    if (!session.data.visitor) await session.update({ visitor: crypto.randomUUID() });
-  }
-  return next();
-});
-
 // requestMiddleware runs on every request; functionMiddleware only on server functions, where
 // client sendContext is unvalidated input. Append to these arrays, never replace them.
 // Enabling Lovable Cloud adds functionMiddleware: [attachSupabaseAuth], the bearer token that
@@ -40,5 +31,5 @@ const visitorMiddleware = createMiddleware().server(async ({ next, request }) =>
 // user-managed Supabase project is connected, no middleware here sets Authorization, and the
 // project did not intentionally replace it.
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware, csrfMiddleware, visitorMiddleware],
+  requestMiddleware: [errorMiddleware, csrfMiddleware],
 }));

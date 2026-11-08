@@ -33,7 +33,7 @@ export function ResultsMap({ results }: { results: Recommendation[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const located = results
-    .map((r) => ({ r, rank: r.rank }))
+    .map((r, i) => ({ r, rank: i + 1 }))
     .filter((x) => typeof x.r.lat === "number" && typeof x.r.lng === "number");
 
   useEffect(() => {
@@ -49,8 +49,7 @@ export function ResultsMap({ results }: { results: Recommendation[] }) {
           streetViewControl: false,
         });
         located.forEach(({ r, rank }) => {
-          if (typeof r.lat !== "number" || typeof r.lng !== "number") return;
-          const pos = { lat: r.lat, lng: r.lng };
+          const pos = { lat: r.lat!, lng: r.lng! };
           bounds.extend(pos);
           const marker = new window.google.maps.Marker({
             map,
@@ -80,7 +79,7 @@ export function ResultsMap({ results }: { results: Recommendation[] }) {
     <div className="glass mb-6 overflow-hidden rounded-3xl">
       <div ref={ref} className="h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
       <p className="px-4 py-2 text-xs text-muted-foreground">
-        Google Maps
+        Numbered markers match the list below — click one to open the restaurant in Google Maps.
       </p>
     </div>
   );

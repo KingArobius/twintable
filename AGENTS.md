@@ -28,6 +28,3 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
-
-- Restaurant review data comes from a bounded, cached server-side Places lookup; shared pure helpers handle matching and ranking so missing or ambiguous ratings cannot be fabricated.
-- Google lookups require an encrypted visitor cookie session issued on an HTML page request, preserving account-free search while protecting direct server calls.
