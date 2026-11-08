@@ -29,15 +29,16 @@ function loadMaps(): Promise<void> {
   return loaderPromise;
 }
 
-export function ResultsMap({ results }: { results: (Recommendation & { rank?: number })[] }) {
+export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommendation & { rank?: number })[]; cityLat?: number; cityLng?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const located = results
     .map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
     .filter((x) => typeof x.r.lat === "number" && typeof x.r.lng === "number");
+  const hasCityCenter = typeof cityLat === "number" && typeof cityLng === "number";
 
   useEffect(() => {
-    if (!located.length || !ref.current) return;
+    if ((!located.length && !hasCityCenter) || !ref.current) return;
     let cancelled = false;
     loadMaps()
       .then(() => {
