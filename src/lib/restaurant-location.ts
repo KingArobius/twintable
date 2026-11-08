@@ -16,7 +16,8 @@ export function exactRestaurantLocation(results: GeocodedPlace[]) {
     const streetAddress = result.address_components?.some((component) => component.types.includes("street_number"))
       && result.address_components?.some((component) => component.types.includes("route"));
     const precise = result.geometry?.location_type === "ROOFTOP"
-      || (business && result.geometry?.location_type === "GEOMETRIC_CENTER");
+      || (business && result.geometry?.location_type === "GEOMETRIC_CENTER")
+      || (streetAddress && result.geometry?.location_type === "RANGE_INTERPOLATED");
     if (result.partial_match || !precise || (!business && !streetAddress) || !result.formatted_address || !location
       || !Number.isFinite(location.lat) || !Number.isFinite(location.lng)
       || Math.abs(location.lat) > 90 || Math.abs(location.lng) > 180) continue;
