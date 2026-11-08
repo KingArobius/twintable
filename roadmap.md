@@ -6,3 +6,4 @@
 - [x] Results as a table
 - [x] Remove cuisine/neighborhood + summary text from table
 - [ ] Sortable table column headers (in progress)
+- [ ] Replace reference sentence with 3 dot-separated words

@@ -37,7 +37,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { generateMessage, GatewayError } = await import("@lovable.dev/ai-gateway");
-    const prompt = `Find 6 real restaurants in ${data.city} that are most similar to "${data.restaurant}". Rate each 1-5 (half stars allowed) on how similar it is to "${data.restaurant}" for: food (cuisine & dishes), ambiance (vibe & decor), service (style of service), menu (format/price-structure similarity), and overall similarity. price is 1-4 ($ to $$$$). Reply with ONLY JSON, no prose: {"reference":"one sentence describing ${data.restaurant}","results":[{"name":"","neighborhood":"","cuisine":"","price":2,"summary":"why it's similar, 1-2 sentences","ratings":{"food":4.5,"ambiance":4,"service":4,"menu":3.5,"overall":4}}]}`;
+    const prompt = `Find 6 real restaurants in ${data.city} that are most similar to "${data.restaurant}". Rate each 1-5 (half stars allowed) on how similar it is to "${data.restaurant}" for: food (cuisine & dishes), ambiance (vibe & decor), service (style of service), menu (format/price-structure similarity), and overall similarity. price is 1-4 ($ to $$$$). Reply with ONLY JSON, no prose: {"reference":"exactly 3 short words describing ${data.restaurant}, separated by dots, e.g. No-frills · Authentic · Cheap","results":[{"name":"","neighborhood":"","cuisine":"","price":2,"summary":"why it's similar, 1-2 sentences","ratings":{"food":4.5,"ambiance":4,"service":4,"menu":3.5,"overall":4}}]}`;
     try {
       const res = await generateMessage({
         model: "anthropic/claude-sonnet-5",
