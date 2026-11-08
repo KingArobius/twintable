@@ -124,13 +124,13 @@ function Index() {
             <>
             <ResultsMap results={sorted} />
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
-              <table className="w-full min-w-[720px] text-sm">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
-                    <th className="px-4 py-3 font-medium">#</th>
-                    <th className="px-4 py-3 font-medium">Restaurant</th>
+                    <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">#</th>
+                    <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
                     {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
-                      <th key={k} className="px-4 py-3 font-medium">
+                      <th key={k} className={`px-2 py-2 font-medium sm:px-4 sm:py-3 ${k !== "price" && k !== "overall" ? "hidden lg:table-cell" : ""}`}>
                         <button
                           type="button"
                           onClick={() => toggleSort(k)}
@@ -146,21 +146,21 @@ function Index() {
                 <tbody>
                   {sorted.map((r, i) => (
                     <tr key={r.name} className="border-b last:border-0 align-top hover:bg-muted/50">
-                      <td className="px-4 py-4">
+                      <td className="px-2 py-3 sm:px-4 sm:py-4">
                         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">{i + 1}</span>
                       </td>
-                      <td className="px-4 py-4">
-                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-lg hover:underline">{r.name}</a>
+                      <td className="px-2 py-3 sm:px-4 sm:py-4">
+                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-base hover:underline sm:text-lg">{r.name}</a>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-4 font-mono">
+                      <td className="whitespace-nowrap px-2 py-3 font-mono sm:px-4 sm:py-4">
                         <span className="text-primary">{"$".repeat(r.price)}</span>
                         <span className="text-border">{"$".repeat(4 - r.price)}</span>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-4">
+                      <td className="whitespace-nowrap px-2 py-3 sm:px-4 sm:py-4">
                         <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-xs">{r.ratings.overall}</span></span>
                       </td>
                       {LABELS.map(([k]) => (
-                        <td key={k} className="whitespace-nowrap px-4 py-4"><Stars value={r.ratings[k]} /></td>
+                        <td key={k} className="hidden whitespace-nowrap px-4 py-4 lg:table-cell"><Stars value={r.ratings[k]} /></td>
                       ))}
                     </tr>
                   ))}
