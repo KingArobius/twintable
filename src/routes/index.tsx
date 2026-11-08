@@ -34,7 +34,27 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
   ["menu", "Menu & format"],
 ];
 
+type SortKey = "overall" | "food" | "ambiance" | "service" | "menu" | "priceAsc" | "priceDesc";
+const SORTS: [SortKey, string][] = [
+  ["overall", "Overall match"],
+  ["food", "Food"],
+  ["ambiance", "Ambiance"],
+  ["service", "Service"],
+  ["menu", "Menu & format"],
+  ["priceAsc", "Price: low to high"],
+  ["priceDesc", "Price: high to low"],
+];
+
+export function sortResults(list: Recommendation[], key: SortKey): Recommendation[] {
+  return [...list].sort((a, b) => {
+    if (key === "priceAsc") return a.price - b.price || b.ratings.overall - a.ratings.overall;
+    if (key === "priceDesc") return b.price - a.price || b.ratings.overall - a.ratings.overall;
+    return b.ratings[key] - a.ratings[key] || b.ratings.overall - a.ratings.overall;
+  });
+}
+
 function Index() {
+  const [sort, setSort] = useState<SortKey>("overall");
   const recommend = useServerFn(recommendRestaurants);
   const [restaurant, setRestaurant] = useState("");
   const [city, setCity] = useState("");
@@ -82,8 +102,14 @@ function Index() {
         {data && (
           <section className="mt-12">
             <p className="mb-6 text-center italic text-muted-foreground">{data.reference}</p>
-            <div className="grid gap-5 md:grid-cols-2">
-              {data.results.map((r) => (
+            <div className="mb-4 flex flex-wrap items-center justify-end gap-2 text-sm">
+              <label htmlFor="sort" className="text-muted-foreground">Sort by</label>
+              <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="rounded-lg border bg-card px-3 py-2">
+                {SORTS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col gap-4">
+              {sortResults(data.results, sort).map((r) => (
                 <article key={r.name} className="rounded-2xl border bg-card p-6">
                   <div className="flex items-start justify-between gap-3">
                     <div>
