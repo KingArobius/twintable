@@ -1,70 +1,84 @@
 import { useEffect, useRef, useState } from "react";
-import { loadGoogleMap } from "@/lib/google-map-loader";
 import type { Recommendation } from "@/lib/recommend.functions";
 
-export function mapRestaurants(results: (Recommendation & { rank?: number })[]) {
-  return results.map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
-    .filter(({ r }) => typeof r.lat === "number" && Number.isFinite(r.lat) && Math.abs(r.lat) <= 90
-      && typeof r.lng === "number" && Number.isFinite(r.lng) && Math.abs(r.lng) <= 180);
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
+
+let loaderPromise: Promise<void> | null = null;
+
+function loadMaps(): Promise<void> {
+  if (window.google?.maps) return Promise.resolve();
+  if (loaderPromise) return loaderPromise;
+  const key = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"];
+  const channel = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID"];
+  if (!key) return Promise.reject(new Error("no key"));
+  loaderPromise = new Promise((resolve, reject) => {
+    const cb = `__initTwinTableMap${Date.now()}`;
+    (window as any)[cb] = () => {
+      delete (window as any)[cb];
+      resolve();
+    };
+    const s = document.createElement("script");
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${cb}&channel=${channel}`;
+    s.onerror = () => reject(new Error("load failed"));
+    document.head.appendChild(s);
+  });
+  return loaderPromise;
 }
 
 export function ResultsMap({ results }: { results: (Recommendation & { rank?: number })[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
-  const located = mapRestaurants(results);
+  const located = results
+    .map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
+    .filter((x) => typeof x.r.lat === "number" && typeof x.r.lng === "number");
 
   useEffect(() => {
     if (!located.length || !ref.current) return;
     let cancelled = false;
-    let map: google.maps.Map | undefined;
-    const markers: google.maps.Marker[] = [];
-    setFailed(false);
-    loadGoogleMap()
+    loadMaps()
       .then(() => {
-        if (cancelled || !ref.current) return;
-        map = new google.maps.Map(ref.current, {
-          clickableIcons: false, mapTypeControl: false, streetViewControl: false,
-          gestureHandling: "cooperative",
-          styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
+        if (cancelled || !ref.current || !window.google?.maps) return;
+        const bounds = new window.google.maps.LatLngBounds();
+        const map = new window.google.maps.Map(ref.current, {
+          clickableIcons: false,
+          mapTypeControl: false,
+          streetViewControl: false,
         });
-        const bounds = new google.maps.LatLngBounds();
         located.forEach(({ r, rank }) => {
-          if (!map || typeof r.lat !== "number" || typeof r.lng !== "number") return;
+          if (typeof r.lat !== "number" || typeof r.lng !== "number") return;
           const pos = { lat: r.lat, lng: r.lng };
           bounds.extend(pos);
-          const marker = new google.maps.Marker({
-            map, position: pos,
+          const marker = new window.google.maps.Marker({
+            map,
+            position: pos,
             title: `${r.name}${r.address ? ` — ${r.address}` : ""}`,
-            label: String(rank),
+            label: { text: String(rank), color: "#ffffff" },
           });
-          markers.push(marker);
-          marker.addListener("click", () => window.open(r.mapsUrl, "_blank", "noopener,noreferrer"));
+          marker.addListener("click", () => window.open(r.mapsUrl, "_blank", "noopener"));
         });
         if (located.length === 1) {
           map.setCenter(bounds.getCenter());
           map.setZoom(17);
         } else {
-          map.fitBounds(bounds, 30);
-          google.maps.event.addListenerOnce(map, "idle", () => {
-            if (map && (map.getZoom() ?? 0) > 17) map.setZoom(17);
-          });
+          map.fitBounds(bounds, 60);
         }
       })
       .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
-      markers.forEach((marker) => { google.maps.event.clearInstanceListeners(marker); marker.setMap(null); });
-      if (map) google.maps.event.clearInstanceListeners(map);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results]);
 
-  if (!located.length) return null;
+  if (!located.length || failed) return null;
 
   return (
     <div className="glass mb-6 overflow-hidden rounded-3xl">
-      <div ref={ref} className="restaurant-map h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
-      {failed && <p role="alert" className="px-4 py-2 text-xs text-destructive">Couldn't load the map. Restaurant links are still available above.</p>}
+      <div ref={ref} className="h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
       <p className="px-4 py-2 text-xs text-muted-foreground">
         {located.length < results.length ? `${results.length - located.length} restaurant location(s) could not be verified and are not pinned.` : null}
       </p>

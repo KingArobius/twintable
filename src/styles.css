@@ -189,10 +189,3 @@
 @utility bg-gradient-primary {
   background-image: var(--gradient-primary);
 }
-
-.restaurant-map {
-  z-index: 0;
-  font-family: var(--font-sans);
-  background: var(--muted);
-}
-
