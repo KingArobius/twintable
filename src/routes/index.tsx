@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 function Stars({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(5, value)) * 20;
   return (
-    <span className="relative inline-block text-lg leading-none tracking-widest" aria-label={`${value} of 5`}>
+    <span className="relative inline-block text-[9px] leading-none tracking-normal sm:text-lg sm:tracking-widest" aria-label={`${value} of 5`}>
       <span className="text-border">★★★★★</span>
       <span className="absolute inset-0 overflow-hidden text-primary" style={{ width: `${pct}%` }}>★★★★★</span>
     </span>
@@ -122,22 +122,23 @@ function Index() {
             <p className="mb-4 text-right text-sm text-muted-foreground">Click a column heading to sort</p>
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
-            <ResultsMap results={sorted} />
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
-                    <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">#</th>
-                    <th className="px-2 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
+                  <tr className="border-b text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                    <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">#</th>
+                    <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
                     {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
-                      <th key={k} className={`px-2 py-2 font-medium sm:px-4 sm:py-3 ${k !== "price" && k !== "overall" ? "hidden lg:table-cell" : ""}`}>
+                      <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                         <button
                           type="button"
                           onClick={() => toggleSort(k)}
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                           className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          {label} {sortKey === k ? (sortDir === "asc" ? "↑" : "↓") : ""}
+                          <span className="sm:hidden">{{ price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
+                          <span className="hidden sm:inline">{label}</span>
+                          {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </button>
                       </th>
                     ))}
@@ -146,27 +147,28 @@ function Index() {
                 <tbody>
                   {sorted.map((r, i) => (
                     <tr key={r.name} className="border-b last:border-0 align-top hover:bg-muted/50">
-                      <td className="px-2 py-3 sm:px-4 sm:py-4">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">{i + 1}</span>
+                      <td className="px-0.5 py-2 sm:px-4 sm:py-4">
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
                       </td>
-                      <td className="px-2 py-3 sm:px-4 sm:py-4">
-                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-base hover:underline sm:text-lg">{r.name}</a>
+                      <td className="max-w-14 px-0.5 py-2 sm:max-w-none sm:px-4 sm:py-4">
+                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="block truncate font-display text-xs hover:underline sm:text-lg">{r.name}</a>
                       </td>
-                      <td className="whitespace-nowrap px-2 py-3 font-mono sm:px-4 sm:py-4">
+                      <td className="whitespace-nowrap px-0.5 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
                         <span className="text-primary">{"$".repeat(r.price)}</span>
-                        <span className="text-border">{"$".repeat(4 - r.price)}</span>
+                        <span className="hidden text-border sm:inline">{"$".repeat(4 - r.price)}</span>
                       </td>
-                      <td className="whitespace-nowrap px-2 py-3 sm:px-4 sm:py-4">
-                        <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-xs">{r.ratings.overall}</span></span>
+                      <td className="whitespace-nowrap px-0.5 py-2 sm:px-4 sm:py-4">
+                        <Stars value={r.ratings.overall} />
                       </td>
                       {LABELS.map(([k]) => (
-                        <td key={k} className="hidden whitespace-nowrap px-4 py-4 lg:table-cell"><Stars value={r.ratings[k]} /></td>
+                        <td key={k} className="whitespace-nowrap px-0.5 py-2 sm:px-4 sm:py-4"><Stars value={r.ratings[k]} /></td>
                       ))}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            <ResultsMap results={sorted} />
             </>
             ); })()}
           </section>
