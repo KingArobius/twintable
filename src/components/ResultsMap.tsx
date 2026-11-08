@@ -64,8 +64,11 @@ export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommenda
         if (located.length === 1) {
           map.setCenter(bounds.getCenter());
           map.setZoom(17);
-        } else {
+        } else if (located.length > 1) {
           map.fitBounds(bounds, 60);
+        } else if (hasCityCenter) {
+          map.setCenter({ lat: cityLat!, lng: cityLng! });
+          map.setZoom(12);
         }
       })
       .catch(() => !cancelled && setFailed(true));
@@ -73,9 +76,9 @@ export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommenda
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results]);
+  }, [results, cityLat, cityLng]);
 
-  if (!located.length || failed) return null;
+  if (failed || (!located.length && !hasCityCenter)) return null;
 
   return (
     <div className="glass mb-6 overflow-hidden rounded-3xl">
