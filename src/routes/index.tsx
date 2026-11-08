@@ -41,7 +41,7 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
 
 type RankedRecommendation = Recommendation & { rank: number };
 
-type SortKey = "rank" | "overall" | "food" | "ambiance" | "service" | "menu" | "price";
+type SortKey = "rank" | "overall" | "food" | "ambiance" | "service" | "price";
 type SortDir = "asc" | "desc";
 
 export function sortResults(list: RankedRecommendation[], key: SortKey, dir: SortDir): RankedRecommendation[] {
@@ -182,7 +182,7 @@ function Index() {
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                           className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
+                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv." }[k]}</span>
                           <span className="hidden sm:inline">{label}</span>
                           {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </button>
