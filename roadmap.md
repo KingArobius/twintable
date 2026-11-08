@@ -1,7 +1,7 @@
 # Roadmap
 
 - [ ] Publish project for twintable.app (publishing approval declined)
-- [ ] Resolve free map and restaurant lookup approach (paid Google setup paused; waiting on scope choice)
+- [ ] Replace map display with free OpenStreetMap; preserve Google lookups and verify fixed pin numbers
 
 - [x] Modernize UI (glass surfaces, gradient button, refined table/dropdown/map)
 - [x] Verify restyled results view with a real search
