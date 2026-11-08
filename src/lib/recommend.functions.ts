@@ -12,8 +12,8 @@ export type Recommendation = {
   lat?: number | undefined;
   lng?: number | undefined;
   mapsUrl: string;
-  address?: string;
-  placeId?: string;
+  address?: string | undefined;
+  placeId?: string | undefined;
 };
 
 async function geocode(name: string, address: string | undefined, city: string) {
