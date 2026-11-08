@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Reduce repeated recommendation costs and unused AI output while keeping Claude
+- [ ] Verify repeat searches and output-token usage
+- [ ] Recommend a monetization approach without adding payments
+
 - [x] Use Google Places business listings for restaurant addresses and stable pins
 - [x] Allow restaurant searches without sign-in while retaining server-only credentials and location matching checks
 
