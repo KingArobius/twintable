@@ -6,4 +6,5 @@
 - [x] Entry boxes initially sized to fit lowercase "city" / "restaurant" placeholders
 - [x] Use Google ratings only; Yelp connection is no longer requested
 - [ ] Replace AI similarity scores with Google ratings and review-based ranking with source links
+- [ ] Blend AI similarity score with Google rating into one overall score that sets the ranking
 - [ ] Test ranking and unavailable-review handling
