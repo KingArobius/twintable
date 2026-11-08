@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
+import { ResultsMap } from "@/components/ResultsMap";
 import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
 
@@ -111,13 +112,21 @@ function Index() {
                 {SORTS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
               </select>
             </div>
+            {(() => { const sorted = sortResults(data.results, sort); return (
+            <>
+            <ResultsMap results={sorted} />
             <div className="flex flex-col gap-4">
-              {sortResults(data.results, sort).map((r) => (
+              {sorted.map((r, i) => (
                 <article key={r.name} className="rounded-2xl border bg-card p-6">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-display text-2xl">{r.name}</h2>
-                      <p className="text-sm text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
+                    <div className="flex items-start gap-3">
+                      <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-mono text-sm font-bold text-primary-foreground">{i + 1}</span>
+                      <div>
+                        <h2 className="font-display text-2xl">
+                          <a href={r.mapsUrl} target="_blank" rel="noopener" className="hover:underline">{r.name}</a>
+                        </h2>
+                        <p className="text-sm text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
+                      </div>
                     </div>
                     <span className="font-mono text-lg">
                       <span className="text-primary">{"$".repeat(r.price)}</span>
@@ -140,6 +149,8 @@ function Index() {
                 </article>
               ))}
             </div>
+            </>
+            ); })()}
           </section>
         )}
       </div>
