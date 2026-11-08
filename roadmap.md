@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Correct restaurant location matching and distinguish unverified Maps searches from verified directions
 - [x] Remove the added homepage introduction and restore its original heading
 - [x] Create and attach a looping Apple Messages sharing preview (appears after publishing; Apple Messages playback not directly tested)
 - [x] Make restaurant actions icon-only at the far right of each list row; verify real search on desktop and phone
