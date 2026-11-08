@@ -8,7 +8,7 @@ export async function findRestaurantBusiness(name: string, city: string, center:
     method: "POST",
     headers: {
       Authorization: `Bearer ${lk}`, "X-Connection-Api-Key": gk, "Content-Type": "application/json",
-      "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.businessStatus,places.addressComponents",
+      "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.businessStatus,places.addressComponents,places.websiteUri",
     },
     body: JSON.stringify({
       textQuery: `${name} restaurant in ${searchArea}`, pageSize: 6,

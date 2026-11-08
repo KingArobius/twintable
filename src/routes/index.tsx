@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useState, type FormEvent } from "react";
 import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
 import foodSpread from "@/assets/food-spread.jpg";
-import shareImage from "@/assets/twin-table-share.jpg.asset.json";
+import { SearchShare } from "@/components/SearchShare";
+import { RestaurantActions } from "@/components/RestaurantActions";
+import { readSearchState, searchTitle, searchUrl, type SearchState } from "@/lib/search-sharing";
 import { ResultsMap } from "@/components/ResultsMap";
 import { Button } from "@/components/ui/button";
 import type { PlaceSuggestion } from "@/lib/places.functions";
@@ -12,19 +14,24 @@ import { recommendRestaurants, type Recommendation } from "@/lib/recommend.funct
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
-  head: () => ({
+  validateSearch: readSearchState,
+  loaderDeps: ({ search }) => search,
+  loader: ({ deps }) => ({ search: deps }),
+  head: ({ loaderData }) => ({
     meta: [
-      { title: "Twin Table — Familiar food, unfamiliar places" },
-      { name: "description", content: "Familiar food, unfamiliar places" },
-      { property: "og:title", content: "Familiar food, unfamiliar places" },
-      { name: "twitter:title", content: "Familiar food, unfamiliar places" },
-      { property: "og:image", content: `https://twintable.app${shareImage.url}` },
-      { name: "twitter:image", content: `https://twintable.app${shareImage.url}` },
-      { property: "og:description", content: "Familiar food, unfamiliar places" },
-      { name: "twitter:description", content: "Familiar food, unfamiliar places" },
+      { title: searchTitle(loaderData?.search ?? {}) },
+      { name: "description", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
+      { property: "og:title", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
+      { name: "twitter:title", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
+      { property: "og:image", content: "https://twintable.app/og-image.png" },
+      { name: "twitter:image", content: "https://twintable.app/og-image.png" },
+      { property: "og:description", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
+      { name: "twitter:description", content: loaderData?.search.restaurant && loaderData.search.city ? searchTitle(loaderData.search) : "Familiar food, unfamiliar places" },
+      { property: "og:url", content: searchUrl(loaderData?.search ?? {}) },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: searchUrl(loaderData?.search ?? {}) }],
   }),
   component: Index,
 });
@@ -60,6 +67,8 @@ export function sortResults(list: RankedRecommendation[], key: SortKey, dir: Sor
 }
 
 function Index() {
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
   const [sortKey, setSortKey] = useState<SortKey>("overall");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
@@ -77,6 +86,7 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ reference: string; results: RankedRecommendation[]; cityLat?: number | undefined; cityLng?: number | undefined } | null>(null);
+  const [completedSearch, setCompletedSearch] = useState<SearchState | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -88,16 +98,38 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!place) { setError("Please pick a restaurant from the suggestions."); return; }
     if (!city) { setError("Please pick a city from the suggestions."); return; }
+    const next = { restaurant: place.name, restaurantAddress: place.address, city: city.name, cityAddress: city.address };
+    if (JSON.stringify(search) === JSON.stringify(next)) void runSearch(next);
+    else void navigate({ search: next });
+  }
+
+  useEffect(() => {
+    if (!search.restaurant || !search.city) {
+      setData(null);
+      setCompletedSearch(null);
+      return;
+    }
+    setPlace({ name: search.restaurant, address: search.restaurantAddress ?? "", placeId: "" });
+    setCity({ name: search.city, address: search.cityAddress ?? "", placeId: "" });
+    let cancelled = false;
+    void runSearch(search, () => cancelled);
+    return () => { cancelled = true; };
+  }, [search.restaurant, search.city, search.restaurantAddress, search.cityAddress]);
+
+  async function runSearch(input: SearchState, cancelled = () => false) {
+    if (!input.restaurant || !input.city) return;
     setLoading(true);
     setError(null);
     setData(null);
     try {
-      const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}`, cityName: city.name } });
+      const r = await recommend({ data: { restaurant: `${input.restaurant}${input.restaurantAddress ? ` (${input.restaurantAddress})` : ""}`, city: `${input.city}${input.cityAddress ? `, ${input.cityAddress}` : ""}`, cityName: input.city } });
+      if (cancelled()) return;
       if (r.ok) {
+        setCompletedSearch(input);
         setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })), cityLat: r.cityLat, cityLng: r.cityLng });
         if (["twintable.app", "www.twintable.app", "twintable.lovable.app"].includes(window.location.hostname) && r.results.length > 0) {
           window.__lovableEvents?.track?.("project.restaurant_search_completed", { cached: r.cached, result_count: r.results.length });
@@ -105,9 +137,9 @@ function Index() {
       }
       else setError(r.error);
     } catch {
-      setError("Something went wrong. Please try again.");
+      if (!cancelled()) setError("Something went wrong. Please try again.");
     } finally {
-      setLoading(false);
+      if (!cancelled()) setLoading(false);
     }
   }
 
@@ -124,7 +156,7 @@ function Index() {
           />
         </div>
         <header className="text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
+          <h1 className="font-display text-3xl text-foreground">{search.restaurant && search.city ? `Restaurants like ${search.restaurant} in ${search.city}` : "Twin Table"}</h1>
         </header>
 
         <form onSubmit={onSubmit} className="glass mx-auto mt-6 block w-fit rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6 md:flex md:items-center md:gap-5 md:py-4">
@@ -154,6 +186,7 @@ function Index() {
 
         {data && (
           <section className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500 sm:mt-12">
+            {completedSearch && <div className="mb-4"><SearchShare search={completedSearch} /></div>}
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <div className="glass overflow-x-auto rounded-3xl">
@@ -201,8 +234,9 @@ function Index() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((r, i) => (
-                    <tr key={r.name} className="border-b border-primary/8 text-center align-middle transition-colors last:border-0 hover:bg-primary/5">
+                  {sorted.map((r) => (
+                    <Fragment key={r.name}>
+                    <tr className="text-center align-middle transition-colors hover:bg-primary/5">
                       <td className="px-0.5 py-2 sm:px-4 sm:py-4">
                         <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary font-mono text-[10px] font-bold text-primary-foreground shadow-sm shadow-primary/30 sm:h-7 sm:w-7 sm:text-xs">{r.rank}</span>
                       </td>
@@ -220,6 +254,8 @@ function Index() {
                         <td key={k} className="whitespace-nowrap px-0.5 py-2 sm:px-4 sm:py-4"><Stars value={r.ratings[k]} /></td>
                       ))}
                     </tr>
+                    <tr className="border-b border-primary/10 last:border-0"><td colSpan={7} className="px-2 pb-3"><RestaurantActions restaurant={r} city={completedSearch?.city ?? search.city ?? ""} /></td></tr>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
@@ -231,6 +267,10 @@ function Index() {
             ); })()}
           </section>
         )}
+        {!search.restaurant && <section className="mx-auto mt-12 max-w-2xl text-center">
+          <h2 className="font-display text-xl">Familiar food, unfamiliar places</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Find restaurants like your favorite, in any city. Twin Table compares food, ambiance, and service similarity, with price ranges from $ to $$$$.</p>
+        </section>}
       </div>
     </main>
   );

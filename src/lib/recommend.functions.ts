@@ -12,6 +12,7 @@ export type Recommendation = {
   mapsUrl: string;
   address?: string | undefined;
   placeId?: string | undefined;
+  website?: string | undefined;
 };
 
 async function geocodeCity(city: string) {
@@ -77,6 +78,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
             lng: loc?.lng,
             address: loc?.address,
             placeId: loc?.placeId,
+            website: loc?.website,
             mapsUrl: restaurantMapsUrl(r.name, loc?.address ?? data.city, loc?.placeId),
           };
         }),

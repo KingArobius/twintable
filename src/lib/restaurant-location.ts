@@ -39,6 +39,7 @@ export type BusinessPlace = {
   location?: { latitude: number; longitude: number };
   types?: string[];
   businessStatus?: string;
+  websiteUri?: string;
   addressComponents?: { longText?: string; types?: string[] }[];
 };
 
@@ -83,7 +84,7 @@ export function restaurantBusinessLocation(places: BusinessPlace[], name: string
     const sameCity = cities.some((part) => normalized(part.longText ?? "") === normalized(city));
     const nearCity = !!center && distanceKm(center, { lat: location.latitude, lng: location.longitude }) <= METRO_RADIUS_KM;
     if (!sameCity && !nearCity) continue;
-    return { lat: location.latitude, lng: location.longitude, address: place.formattedAddress, placeId: place.id };
+    return { lat: location.latitude, lng: location.longitude, address: place.formattedAddress, placeId: place.id, website: place.websiteUri };
   }
   return null;
 }

@@ -1,10 +1,10 @@
 # Roadmap
-- [ ] Replace author/social branding and sharing image; preserve custom favicon and add Apple icon
-- [ ] Verify Lovable badge is hidden
-- [ ] Make searches reproducible from URLs with dynamic result metadata
-- [ ] Add Share and Share on X controls with copy confirmation
-- [ ] Add mobile-friendly directions, website, and reservation actions with optional affiliate configuration
-- [ ] Improve crawler-visible homepage and prerender it using native page metadata
+- [x] Replace author/social branding and sharing image; preserve custom favicon and add Apple icon
+- [x] Verify Lovable badge is hidden
+- [x] Make searches reproducible from URLs with dynamic result metadata (Google-dependent end-to-end check unavailable)
+- [x] Add Share and Share on X controls with copy confirmation
+- [x] Add mobile-friendly directions, website, and reservation actions with optional affiliate configuration
+- [x] Improve crawler-visible homepage and configure native prerendering (static output awaits next publish)
 - [ ] Create popular-search landing pages, related links, structured data, sitemap entries, and homepage links (blocked: actual combination list not supplied)
 - [x] Create and verify blurred food previews with TWIN TABLE for social sharing and browser icon
 - [x] Replace the shared-link headline with Familiar food, unfamiliar places
