@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Replace Apple Messages preview with split-plates motion, existing logo, and current slogan; retain matching still sharing image (1200x630, five seconds, 775KB; publishing and Apple playback still required)
 - [x] Request extra Claude candidates and return only up to six verified open restaurants, with bounded Google lookups and regression tests (live Google verification requires authorized deployment)
 - [x] Make restaurant action icons smaller on mobile; preserve desktop size and touch target
 - [x] Correct restaurant location matching and distinguish unverified Maps searches from verified directions (33 regression tests pass; live Google Maps validation requires authorized deployment)
