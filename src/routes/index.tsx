@@ -96,13 +96,13 @@ function Index() {
           <p className="font-cursive text-xl leading-loose md:whitespace-nowrap md:text-2xl md:leading-loose">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
-              <span className="inline-block min-w-56 border-b-2 border-primary/40 text-left align-baseline">
+              <span className="inline-block min-w-40 border-b-2 border-primary/40 text-left align-baseline">
                 <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City" ariaLabel="City" emptyMessage="No matching cities found." />
               </span>
             </span>{" "}
             <span className="block md:inline">
               similar to{" "}
-              <span className="inline-block min-w-72 border-b-2 border-primary/40 text-left align-baseline">
+              <span className="inline-block min-w-52 border-b-2 border-primary/40 text-left align-baseline">
                 <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
               </span>
               .
