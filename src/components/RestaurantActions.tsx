@@ -21,7 +21,7 @@ export function RestaurantActions({ restaurant, city }: { restaurant: Recommenda
         <Tooltip key={label}>
           <TooltipTrigger asChild>
             <Button asChild variant="ghost" size="icon" className="size-6 shrink-0 text-primary sm:size-9">
-              <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${label} for ${restaurant.name}`}><Icon className="size-3.5 sm:size-4" aria-hidden="true" /></a>
+              <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${label} for ${restaurant.name}`}><Icon className="size-2.5 sm:size-4" aria-hidden="true" /></a>
             </Button>
           </TooltipTrigger>
           <TooltipContent>{label}</TooltipContent>
