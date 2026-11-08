@@ -49,19 +49,20 @@ export function ResultsMap({ results }: { results: (Recommendation & { rank?: nu
           streetViewControl: false,
         });
         located.forEach(({ r, rank }) => {
-          const pos = { lat: r.lat!, lng: r.lng! };
+          if (typeof r.lat !== "number" || typeof r.lng !== "number") return;
+          const pos = { lat: r.lat, lng: r.lng };
           bounds.extend(pos);
           const marker = new window.google.maps.Marker({
             map,
             position: pos,
-            title: r.name,
+            title: `${r.name}${r.address ? ` — ${r.address}` : ""}`,
             label: { text: String(rank), color: "#ffffff" },
           });
           marker.addListener("click", () => window.open(r.mapsUrl, "_blank", "noopener"));
         });
         if (located.length === 1) {
           map.setCenter(bounds.getCenter());
-          map.setZoom(13);
+          map.setZoom(17);
         } else {
           map.fitBounds(bounds, 60);
         }
@@ -79,7 +80,7 @@ export function ResultsMap({ results }: { results: (Recommendation & { rank?: nu
     <div className="glass mb-6 overflow-hidden rounded-3xl">
       <div ref={ref} className="h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
       <p className="px-4 py-2 text-xs text-muted-foreground">
-        Numbered markers match the list below — click one to open the restaurant in Google Maps.
+        {located.length < results.length ? `${results.length - located.length} restaurant location(s) could not be verified and are not pinned.` : null}
       </p>
     </div>
   );

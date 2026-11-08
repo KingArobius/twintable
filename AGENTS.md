@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Validate restaurant geocodes in the shared location helper; only precise business or numbered street-address matches may become pins, never city centroids or partial matches.
