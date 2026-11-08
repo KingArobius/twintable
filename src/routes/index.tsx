@@ -91,7 +91,12 @@ function Index() {
     setData(null);
     try {
       const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}`, cityName: city.name } });
-      if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })), cityLat: r.cityLat, cityLng: r.cityLng });
+      if (r.ok) {
+        setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })), cityLat: r.cityLat, cityLng: r.cityLng });
+        if (["twintable.app", "www.twintable.app", "twintable.lovable.app"].includes(window.location.hostname) && r.results.length > 0) {
+          window.__lovableEvents?.track?.("project.restaurant_search_completed", { cached: r.cached, result_count: r.results.length });
+        }
+      }
       else setError(r.error);
     } catch {
       setError("Something went wrong. Please try again.");
