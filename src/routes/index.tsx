@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
 import { ResultsMap } from "@/components/ResultsMap";
@@ -67,6 +67,17 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ reference: string; results: Recommendation[] } | null>(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const t = Math.min(1, window.scrollY / Math.min(max, 900));
+      document.documentElement.style.setProperty("--bg-mix", `${(t * 100).toFixed(1)}%`);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();

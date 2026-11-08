@@ -162,7 +162,7 @@
       radial-gradient(ellipse 60% 50% at 92% 8%, color-mix(in oklab, var(--primary) 18%, transparent), transparent 70%),
       radial-gradient(ellipse 50% 40% at 78% 62%, color-mix(in oklab, var(--primary-glow) 10%, transparent), transparent 70%),
       radial-gradient(ellipse 70% 55% at 50% 112%, color-mix(in oklab, var(--primary) 14%, transparent), transparent 70%),
-      var(--background);
+      color-mix(in oklab, var(--background), oklch(0.84 0.09 155) var(--bg-mix, 0%));
     background-attachment: fixed;
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
