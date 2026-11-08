@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Review SEO and present findings without changing the site
+- [ ] Track completed visitor searches separately from preview and tests
+
 - [x] Reduce repeated recommendation costs and unused AI output while keeping Claude
 - [x] Verify repeat searches and output-token usage
 - [x] Recommend a monetization approach without adding payments
