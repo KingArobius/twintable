@@ -1,5 +1,6 @@
 # Roadmap
 - [ ] Create and verify blurred food previews with TWIN TABLE for social sharing and browser icon
+- [ ] Replace the shared-link headline with Familiar food, unfamiliar places
 - [x] Set homepage search and social descriptions to the requested wording
 - [x] Request publication of the sitemap, descriptions, and production visitor-search tracking (deployment confirmation pending)
 
