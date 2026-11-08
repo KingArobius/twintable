@@ -158,7 +158,7 @@ function Index() {
                       </button>
                     </th>
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
-                    {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
+                    {([["price", "Price"], ["overall", "Similarity Score"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
                       <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                         <button
                           type="button"
