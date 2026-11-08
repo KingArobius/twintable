@@ -114,17 +114,17 @@ function Index() {
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
         </header>
 
-        <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
-          <p className="glass inline-block rounded-[2.5rem] px-3 py-3 font-rounded text-base font-semibold leading-normal tracking-tight sm:px-10 sm:py-5 sm:text-lg md:whitespace-nowrap md:text-2xl md:leading-normal">
+        <form onSubmit={onSubmit} className="glass mx-auto mt-6 inline-block rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6">
+          <p className="font-rounded text-base font-semibold leading-normal tracking-tight sm:text-lg md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
-              <span className="inline-block w-14 border-b-2 border-primary/40 text-left align-baseline md:w-16">
+              <span className="inline-block border-b-2 border-primary/40 text-left align-baseline">
                 <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="city" ariaLabel="City" emptyMessage="No matching cities found." />
               </span>
             </span>{" "}
             <span className="block md:inline">
               similar to{" "}
-              <span className="inline-block w-24 border-b-2 border-primary/40 text-left align-baseline md:w-28">
+              <span className="inline-block border-b-2 border-primary/40 text-left align-baseline">
                 <RestaurantPicker value={place} onChange={setPlace} placeholder="restaurant" />
               </span>
               .
