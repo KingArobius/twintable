@@ -92,7 +92,7 @@ function Index() {
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
         </header>
 
-        <form onSubmit={onSubmit} className="mt-10 text-center">
+        <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
           <p className="font-cursive text-lg leading-normal md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
@@ -117,7 +117,7 @@ function Index() {
         {error && <p className="mt-10 text-center text-destructive">{error}</p>}
 
         {data && (
-          <section className="mt-12">
+          <section className="mt-6 sm:mt-12">
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
