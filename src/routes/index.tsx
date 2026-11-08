@@ -37,27 +37,29 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
   ["menu", "Menu & format"],
 ];
 
-type SortKey = "overall" | "food" | "ambiance" | "service" | "menu" | "priceAsc" | "priceDesc";
-const SORTS: [SortKey, string][] = [
-  ["overall", "Overall match"],
-  ["food", "Food"],
-  ["ambiance", "Ambiance"],
-  ["service", "Service"],
-  ["menu", "Menu & format"],
-  ["priceAsc", "Price: low to high"],
-  ["priceDesc", "Price: high to low"],
-];
+type SortKey = "overall" | "food" | "ambiance" | "service" | "menu" | "price";
+type SortDir = "asc" | "desc";
 
-export function sortResults(list: Recommendation[], key: SortKey): Recommendation[] {
+export function sortResults(list: Recommendation[], key: SortKey, dir: SortDir): Recommendation[] {
+  const sign = dir === "asc" ? 1 : -1;
   return [...list].sort((a, b) => {
-    if (key === "priceAsc") return a.price - b.price || b.ratings.overall - a.ratings.overall;
-    if (key === "priceDesc") return b.price - a.price || b.ratings.overall - a.ratings.overall;
-    return b.ratings[key] - a.ratings[key] || b.ratings.overall - a.ratings.overall;
+    const diff = key === "price" ? a.price - b.price : a.ratings[key] - b.ratings[key];
+    return sign * diff || b.ratings.overall - a.ratings.overall;
   });
 }
 
 function Index() {
-  const [sort, setSort] = useState<SortKey>("overall");
+  const [sortKey, setSortKey] = useState<SortKey>("overall");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  function toggleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir(key === "price" ? "asc" : "desc");
+    }
+  }
   const recommend = useServerFn(recommendRestaurants);
   const [place, setPlace] = useState<PlaceSuggestion | null>(null);
   const [city, setCity] = useState<PlaceSuggestion | null>(null);
@@ -106,13 +108,8 @@ function Index() {
         {data && (
           <section className="mt-12">
             <p className="mb-6 text-center italic text-muted-foreground">{data.reference}</p>
-            <div className="mb-4 flex flex-wrap items-center justify-end gap-2 text-sm">
-              <label htmlFor="sort" className="text-muted-foreground">Sort by</label>
-              <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="rounded-lg border bg-card px-3 py-2">
-                {SORTS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
-              </select>
-            </div>
-            {(() => { const sorted = sortResults(data.results, sort); return (
+            <p className="mb-4 text-right text-sm text-muted-foreground">Click a column heading to sort</p>
+            {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <ResultsMap results={sorted} />
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
@@ -121,10 +118,17 @@ function Index() {
                   <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-3 font-medium">#</th>
                     <th className="px-4 py-3 font-medium">Restaurant</th>
-                    <th className="px-4 py-3 font-medium">Price</th>
-                    <th className="px-4 py-3 font-medium">Overall</th>
-                    {LABELS.map(([k, label]) => (
-                      <th key={k} className="px-4 py-3 font-medium">{label}</th>
+                    {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
+                      <th key={k} className="px-4 py-3 font-medium">
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(k)}
+                          aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
+                          className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
+                        >
+                          {label} {sortKey === k ? (sortDir === "asc" ? "↑" : "↓") : ""}
+                        </button>
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -136,8 +140,6 @@ function Index() {
                       </td>
                       <td className="px-4 py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-lg hover:underline">{r.name}</a>
-                        <p className="text-xs text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
-                        <p className="mt-1 max-w-xs text-xs text-muted-foreground">{r.summary}</p>
                       </td>
                       <td className="whitespace-nowrap px-4 py-4 font-mono">
                         <span className="text-primary">{"$".repeat(r.price)}</span>
