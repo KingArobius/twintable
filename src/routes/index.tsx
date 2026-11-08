@@ -95,7 +95,7 @@ function Index() {
     setData(null);
     try {
       const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}` } });
-      if (r.ok) setData({ reference: r.reference, results: r.results });
+      if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })) });
       else setError(r.error);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -197,7 +197,7 @@ function Index() {
                   {sorted.map((r, i) => (
                     <tr key={r.name} className="border-b border-primary/8 text-center align-middle transition-colors last:border-0 hover:bg-primary/5">
                       <td className="px-0.5 py-2 sm:px-4 sm:py-4">
-                        <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary font-mono text-[10px] font-bold text-primary-foreground shadow-sm shadow-primary/30 sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
+                        <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary font-mono text-[10px] font-bold text-primary-foreground shadow-sm shadow-primary/30 sm:h-7 sm:w-7 sm:text-xs">{r.rank}</span>
                       </td>
                       <td className="w-16 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="block text-center font-display text-[10px] leading-tight underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-lg">{r.name}</a>
