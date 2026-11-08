@@ -38,13 +38,20 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
   ["service", "Service"],
 ];
 
+type RankedRecommendation = Recommendation & { rank: number };
+
 type SortKey = "rank" | "overall" | "food" | "ambiance" | "service" | "menu" | "price";
 type SortDir = "asc" | "desc";
 
-export function sortResults(list: Recommendation[], key: SortKey, dir: SortDir): Recommendation[] {
+export function sortResults<T extends Recommendation>(list: T[], key: SortKey, dir: SortDir): T[] {
   const sign = dir === "asc" ? 1 : -1;
   return [...list].sort((a, b) => {
-    const diff = key === "price" ? a.price - b.price : key === "rank" ? list.indexOf(a) - list.indexOf(b) : a.ratings[key] - b.ratings[key];
+    const diff =
+      key === "price"
+        ? a.price - b.price
+        : key === "rank"
+          ? (a as RankedRecommendation).rank - (b as RankedRecommendation).rank
+          : a.ratings[key] - b.ratings[key];
     return sign * diff || b.ratings.overall - a.ratings.overall;
   });
 }
@@ -66,7 +73,7 @@ function Index() {
   const [city, setCity] = useState<PlaceSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<{ reference: string; results: Recommendation[] } | null>(null);
+  const [data, setData] = useState<{ reference: string; results: RankedRecommendation[] } | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
