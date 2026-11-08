@@ -21,6 +21,18 @@ describe("Exact restaurant locations", () => {
   it("rejects street midpoints", () => {
     expect(exactRestaurantLocation([{ ...venue, geometry: { ...venue.geometry, location_type: "RANGE_INTERPOLATED" } }])).toBeNull();
   });
+  it("accepts a street-level match when it has a real street number", () => {
+    const streetMatch: GeocodedPlace = {
+      formatted_address: "456 Oak Ave, Austin, TX",
+      types: ["route"],
+      address_components: [
+        { types: ["street_number"], long_name: "456" },
+        { types: ["route"], long_name: "Oak Avenue" },
+      ],
+      geometry: { location: { lat: 30.27, lng: -97.75 }, location_type: "RANGE_INTERPOLATED" },
+    };
+    expect(exactRestaurantLocation([streetMatch])).toEqual({ lat: 30.27, lng: -97.75, address: "456 Oak Ave, Austin, TX", placeId: undefined });
+  });
   it("links the restaurant by its verified place ID and full address", () => {
     const url = new URL(restaurantMapsUrl("Twin Cafe", "123 Main St, Austin, TX", "verified-restaurant"));
     expect(url.searchParams.get("query_place_id")).toBe("verified-restaurant");
