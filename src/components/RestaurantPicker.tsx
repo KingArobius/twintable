@@ -82,7 +82,7 @@ export function RestaurantPicker({
         className="w-full rounded-xl bg-transparent px-1 py-0 leading-none outline-none focus:bg-muted"
       />
       {open && !value && (items.length > 0 || msg) && (
-        <ul role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1.5 max-h-60 min-w-56 overflow-y-auto rounded-2xl border border-primary/15 bg-popover p-1 font-sans text-sm text-popover-foreground shadow-xl shadow-primary/10 animate-in fade-in zoom-in-95 duration-150">
+        <ul role="listbox" className="absolute left-0 top-full z-20 mt-1.5 max-h-60 w-max min-w-56 max-w-80 overflow-y-auto rounded-2xl border border-primary/15 bg-popover p-1 font-sans text-sm text-popover-foreground shadow-xl shadow-primary/10 animate-in fade-in zoom-in-95 duration-150 max-sm:fixed max-sm:inset-x-4 max-sm:top-auto max-sm:w-auto max-sm:max-w-none">
           {items.map((p, i) => (
             <li
               key={p.placeId}
