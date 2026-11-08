@@ -1,9 +1,9 @@
 # Roadmap
 
-- [ ] Reduce repeated recommendation costs and unused AI output while keeping Claude
-- [ ] Verify repeat searches and output-token usage
-- [ ] Recommend a monetization approach without adding payments
-- [ ] Show recorded search calls and per-call AI credit costs in chat
+- [x] Reduce repeated recommendation costs and unused AI output while keeping Claude
+- [x] Verify repeat searches and output-token usage
+- [x] Recommend a monetization approach without adding payments
+- [x] Show recorded search calls and per-call AI credit costs in chat
 - [ ] Make the background color fade much slower while scrolling
 
 - [x] Use Google Places business listings for restaurant addresses and stable pins

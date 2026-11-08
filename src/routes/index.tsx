@@ -74,8 +74,7 @@ function Index() {
 
   useEffect(() => {
     const onScroll = () => {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const t = Math.min(1, window.scrollY / Math.min(max, 900));
+      const t = Math.min(1, window.scrollY / 4500);
       document.documentElement.style.setProperty("--bg-mix", `${(t * 100).toFixed(1)}%`);
     };
     onScroll();
