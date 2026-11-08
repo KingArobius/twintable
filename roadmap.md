@@ -1,9 +1,9 @@
 # Roadmap
 
-- [ ] Change SEO wording to "Restaurants like your favorite, away from home"
+- [x] Change SEO wording to "Restaurants like your favorite, away from home"
 
 - [ ] Publish project for twintable.app (publishing approval declined)
-- [ ] Replace map display with free OpenStreetMap; preserve Google lookups and verify fixed pin numbers
+- [x] Replace map display with free OpenStreetMap; preserve Google lookups and verify fixed pin numbers
 
 - [x] Modernize UI (glass surfaces, gradient button, refined table/dropdown/map)
 - [x] Verify restyled results view with a real search
