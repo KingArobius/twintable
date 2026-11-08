@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Recommendation } from "@/lib/recommend.functions";
+import { getMapsBrowserKey } from "@/lib/maps-key.functions";
 
 declare global {
   interface Window {
@@ -12,20 +13,24 @@ let loaderPromise: Promise<void> | null = null;
 function loadMaps(): Promise<void> {
   if (window.google?.maps) return Promise.resolve();
   if (loaderPromise) return loaderPromise;
-  const key = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"];
   const channel = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID"];
-  if (!key) return Promise.reject(new Error("no key"));
-  loaderPromise = new Promise((resolve, reject) => {
+  loaderPromise = getMapsBrowserKey()
+    .then((key) => key || import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"] || "")
+    .then(
+      (key) =>
+        new Promise<void>((resolve, reject) => {
+          if (!key) return reject(new Error("no key"));
     const cb = `__initTwinTableMap${Date.now()}`;
     (window as any)[cb] = () => {
       delete (window as any)[cb];
       resolve();
     };
-    const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${cb}&channel=${channel}`;
-    s.onerror = () => reject(new Error("load failed"));
-    document.head.appendChild(s);
-  });
+          const s = document.createElement("script");
+          s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${cb}&channel=${channel}`;
+          s.onerror = () => reject(new Error("load failed"));
+          document.head.appendChild(s);
+        }),
+    );
   return loaderPromise;
 }
 
