@@ -8,7 +8,28 @@ export type Recommendation = {
   price: 1 | 2 | 3 | 4;
   summary: string;
   ratings: { food: number; ambiance: number; service: number; menu: number; overall: number };
+  lat?: number | undefined;
+  lng?: number | undefined;
+  mapsUrl: string;
 };
+
+async function geocode(name: string, city: string): Promise<{ lat: number; lng: number } | null> {
+  const lk = process.env["LOVABLE_API_KEY"];
+  const gk = process.env["GOOGLE_MAPS_API_KEY"];
+  if (!lk || !gk) return null;
+  try {
+    const res = await fetch(
+      `https://connector-gateway.lovable.dev/google_maps/maps/api/geocode/json?address=${encodeURIComponent(`${name}, ${city}`)}`,
+      { headers: { Authorization: `Bearer ${lk}`, "X-Connection-Api-Key": gk } },
+    );
+    if (!res.ok) return null;
+    const json = (await res.json()) as { results?: { geometry?: { location?: { lat: number; lng: number } } }[] };
+    const loc = json.results?.[0]?.geometry?.location;
+    return loc ? { lat: loc.lat, lng: loc.lng } : null;
+  } catch {
+    return null;
+  }
+}
 
 export const recommendRestaurants = createServerFn({ method: "POST" })
   .inputValidator((d) =>
@@ -29,7 +50,18 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
         .join("");
       const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
       const parsed = JSON.parse(json) as { reference: string; results: Recommendation[] };
-      return { ok: true as const, reference: parsed.reference, results: parsed.results };
+      const results = await Promise.all(
+        parsed.results.map(async (r) => {
+          const loc = await geocode(r.name, data.city);
+          return {
+            ...r,
+            lat: loc?.lat,
+            lng: loc?.lng,
+            mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${r.name}, ${data.city}`)}`,
+          };
+        }),
+      );
+      return { ok: true as const, reference: parsed.reference, results };
     } catch (e) {
       console.error(e);
       const msg = e instanceof GatewayError ? "The AI service is busy or unavailable. Please try again." : "Couldn't read the recommendations. Please try again.";

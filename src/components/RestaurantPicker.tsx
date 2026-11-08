@@ -5,9 +5,19 @@ import { autocompleteRestaurants, type PlaceSuggestion } from "@/lib/places.func
 export function RestaurantPicker({
   value,
   onChange,
+  types,
+  placeholder = "Restaurant (e.g. Nobu)",
+  ariaLabel = "Restaurant",
+  emptyMessage = "No matching restaurants found.",
+  className = "",
 }: {
   value: PlaceSuggestion | null;
   onChange: (p: PlaceSuggestion | null) => void;
+  types?: string[];
+  placeholder?: string;
+  ariaLabel?: string;
+  emptyMessage?: string;
+  className?: string;
 }) {
   const fetchSuggestions = useServerFn(autocompleteRestaurants);
   const [text, setText] = useState("");
@@ -28,17 +38,18 @@ export function RestaurantPicker({
     const id = ++reqId.current;
     const t = setTimeout(async () => {
       try {
-        const r = await fetchSuggestions({ data: { input: text, sessionToken: token.current! } });
+        const r = await fetchSuggestions({ data: { input: text, sessionToken: token.current!, types } });
         if (id !== reqId.current) return;
         setItems(r.suggestions);
         setActive(0);
-        setMsg(r.error ?? (r.suggestions.length ? null : "No matching restaurants found."));
+        setMsg(r.error ?? (r.suggestions.length ? null : emptyMessage));
         setOpen(true);
       } catch {
         if (id === reqId.current) setMsg("Couldn't load suggestions.");
       }
     }, 300);
     return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, value, fetchSuggestions]);
 
   function pick(p: PlaceSuggestion) {
@@ -49,12 +60,12 @@ export function RestaurantPicker({
   }
 
   return (
-    <div className="relative flex-1">
+    <div className={`relative flex-1 ${className}`}>
       <input
         value={text}
         role="combobox"
         aria-expanded={open}
-        aria-label="Restaurant"
+        aria-label={ariaLabel}
         onChange={(e) => {
           setText(e.target.value);
           if (value) onChange(null);
@@ -67,7 +78,7 @@ export function RestaurantPicker({
           if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => (a - 1 + items.length) % items.length); }
           if (e.key === "Enter") { e.preventDefault(); const it = items[active]; if (it) pick(it); }
         }}
-        placeholder="Restaurant (e.g. Nobu)"
+        placeholder={placeholder}
         className="w-full rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted"
       />
       {value && <p className="px-4 pb-1 text-xs text-muted-foreground truncate">✓ {value.address}</p>}

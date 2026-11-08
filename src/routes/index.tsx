@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
+import { ResultsMap } from "@/components/ResultsMap";
 import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
 
@@ -59,7 +60,7 @@ function Index() {
   const [sort, setSort] = useState<SortKey>("overall");
   const recommend = useServerFn(recommendRestaurants);
   const [place, setPlace] = useState<PlaceSuggestion | null>(null);
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState<PlaceSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ reference: string; results: Recommendation[] } | null>(null);
@@ -67,12 +68,12 @@ function Index() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!place) { setError("Please pick a restaurant from the suggestions."); return; }
-    if (!city.trim()) { setError("Please enter a city."); return; }
+    if (!city) { setError("Please pick a city from the suggestions."); return; }
     setLoading(true);
     setError(null);
     setData(null);
     try {
-      const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city } });
+      const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}` } });
       if (r.ok) setData({ reference: r.reference, results: r.results });
       else setError(r.error);
     } catch {
@@ -93,7 +94,7 @@ function Index() {
 
         <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-2 rounded-2xl border bg-card p-2 shadow-sm md:flex-row md:items-start">
           <RestaurantPicker value={place} onChange={setPlace} />
-          <input value={city} onChange={(e) => setCity(e.target.value)} aria-label="City" placeholder="City (e.g. Chicago)" className="flex-1 self-stretch md:self-auto rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted md:border-l" />
+          <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City (e.g. Chicago)" ariaLabel="City" emptyMessage="No matching cities found." className="md:border-l" />
           <button disabled={loading} className="rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
             {loading ? "Searching…" : "Search"}
           </button>
@@ -111,35 +112,50 @@ function Index() {
                 {SORTS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
               </select>
             </div>
-            <div className="flex flex-col gap-4">
-              {sortResults(data.results, sort).map((r) => (
-                <article key={r.name} className="rounded-2xl border bg-card p-6">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-display text-2xl">{r.name}</h2>
-                      <p className="text-sm text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
-                    </div>
-                    <span className="font-mono text-lg">
-                      <span className="text-primary">{"$".repeat(r.price)}</span>
-                      <span className="text-border">{"$".repeat(4 - r.price)}</span>
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm">{r.summary}</p>
-                  <div className="mt-4 flex items-center justify-between border-t pt-4">
-                    <span className="font-medium">Overall match</span>
-                    <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-sm">{r.ratings.overall}</span></span>
-                  </div>
-                  <dl className="mt-2 grid gap-1 md:grid-cols-2 md:gap-x-10">
+            {(() => { const sorted = sortResults(data.results, sort); return (
+            <>
+            <ResultsMap results={sorted} />
+            <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead>
+                  <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <th className="px-4 py-3 font-medium">#</th>
+                    <th className="px-4 py-3 font-medium">Restaurant</th>
+                    <th className="px-4 py-3 font-medium">Price</th>
+                    <th className="px-4 py-3 font-medium">Overall</th>
                     {LABELS.map(([k, label]) => (
-                      <div key={k} className="flex items-center justify-between text-sm">
-                        <dt className="text-muted-foreground">{label}</dt>
-                        <dd><Stars value={r.ratings[k]} /></dd>
-                      </div>
+                      <th key={k} className="px-4 py-3 font-medium">{label}</th>
                     ))}
-                  </dl>
-                </article>
-              ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((r, i) => (
+                    <tr key={r.name} className="border-b last:border-0 align-top hover:bg-muted/50">
+                      <td className="px-4 py-4">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">{i + 1}</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-lg hover:underline">{r.name}</a>
+                        <p className="text-xs text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
+                        <p className="mt-1 max-w-xs text-xs text-muted-foreground">{r.summary}</p>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4 font-mono">
+                        <span className="text-primary">{"$".repeat(r.price)}</span>
+                        <span className="text-border">{"$".repeat(4 - r.price)}</span>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-xs">{r.ratings.overall}</span></span>
+                      </td>
+                      {LABELS.map(([k]) => (
+                        <td key={k} className="whitespace-nowrap px-4 py-4"><Stars value={r.ratings[k]} /></td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
+            </>
+            ); })()}
           </section>
         )}
       </div>
