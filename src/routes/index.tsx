@@ -164,11 +164,7 @@ function Index() {
           />
         </div>
         <header className="text-center">
-          {search.restaurant && search.city ? (
-            <h1 className="font-display text-3xl text-foreground">{`Restaurants like ${search.restaurant} in ${search.city}`}</h1>
-          ) : (
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
-          )}
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
         </header>
 
         <form onSubmit={onSubmit} className="glass mx-auto mt-6 block w-fit rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6 md:flex md:items-center md:gap-5 md:py-4">
