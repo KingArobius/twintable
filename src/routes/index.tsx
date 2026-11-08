@@ -90,8 +90,6 @@ function Index() {
       <div className="mx-auto max-w-4xl">
         <header className="text-center">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
-          <h1 className="mt-3 font-display text-5xl md:text-6xl">Love a place? Find its twin.</h1>
-          <p className="mt-4 text-muted-foreground">Name a restaurant you adore and a city — we'll find the closest matches there.</p>
         </header>
 
         <form onSubmit={onSubmit} className="mt-10 text-center">
