@@ -92,7 +92,7 @@ function Index() {
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
         </header>
 
-        <form onSubmit={onSubmit} className="mt-10 text-center">
+        <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
           <p className="font-cursive text-lg leading-normal md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
@@ -117,13 +117,13 @@ function Index() {
         {error && <p className="mt-10 text-center text-destructive">{error}</p>}
 
         {data && (
-          <section className="mt-12">
+          <section className="mt-6 sm:mt-12">
             {(() => { const sorted = sortResults(data.results, sortKey, sortDir); return (
             <>
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                  <tr className="border-b text-center text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">#</th>
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
                     {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
@@ -144,12 +144,12 @@ function Index() {
                 </thead>
                 <tbody>
                   {sorted.map((r, i) => (
-                    <tr key={r.name} className="border-b last:border-0 align-top hover:bg-muted/50">
+                    <tr key={r.name} className="border-b text-center align-middle last:border-0 hover:bg-muted/50">
                       <td className="px-0.5 py-2 sm:px-4 sm:py-4">
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
+                        <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground sm:h-7 sm:w-7 sm:text-xs">{data.results.indexOf(r) + 1}</span>
                       </td>
                       <td className="w-16 px-0.5 py-2 sm:w-auto sm:px-4 sm:py-4">
-                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="block font-display text-[10px] leading-tight hover:underline sm:text-lg">{r.name}</a>
+                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="block text-center font-display text-[10px] leading-tight hover:underline sm:text-lg">{r.name}</a>
                       </td>
                       <td className="whitespace-nowrap px-0.5 py-2 font-mono text-[10px] sm:px-4 sm:py-4 sm:text-sm">
                         <span className="text-primary">{"$".repeat(r.price)}</span>

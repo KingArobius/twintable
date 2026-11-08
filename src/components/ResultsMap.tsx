@@ -77,7 +77,7 @@ export function ResultsMap({ results }: { results: Recommendation[] }) {
 
   return (
     <div className="mb-6 overflow-hidden rounded-2xl border shadow-sm">
-      <div ref={ref} className="h-80 w-full" aria-label="Map of recommended restaurants" />
+      <div ref={ref} className="h-44 w-full sm:h-80" aria-label="Map of recommended restaurants" />
       <p className="bg-card px-4 py-2 text-xs text-muted-foreground">
         Numbered markers match the list below — click one to open the restaurant in Google Maps.
       </p>
