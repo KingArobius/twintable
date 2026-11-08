@@ -61,7 +61,7 @@ function businessIdentity(value: string, city: string) {
     ? parts.slice(0, -1).join(" ") : base;
 }
 
-export function hasRestaurantCoordinates(place: { lat?: number; lng?: number }): place is { lat: number; lng: number } {
+export function hasRestaurantCoordinates(place: { lat?: number | undefined; lng?: number | undefined }): place is { lat: number; lng: number } {
   return typeof place.lat === "number" && typeof place.lng === "number"
     && Number.isFinite(place.lat) && Number.isFinite(place.lng)
     && Math.abs(place.lat) <= 90 && Math.abs(place.lng) <= 180;
