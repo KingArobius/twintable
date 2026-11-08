@@ -20,11 +20,11 @@ function loadMaps(): Promise<void> {
       (key) =>
         new Promise<void>((resolve, reject) => {
           if (!key) return reject(new Error("no key"));
-    const cb = `__initTwinTableMap${Date.now()}`;
-    (window as any)[cb] = () => {
-      delete (window as any)[cb];
-      resolve();
-    };
+          const cb = `__initTwinTableMap${Date.now()}`;
+          (window as any)[cb] = () => {
+            delete (window as any)[cb];
+            resolve();
+          };
           const s = document.createElement("script");
           s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${cb}&channel=${channel}`;
           s.onerror = () => reject(new Error("load failed"));
