@@ -30,4 +30,4 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - Validate restaurant geocodes in the shared location helper; only precise business or numbered street-address matches may become pins, never city centroids or partial matches.
-- Load Leaflet dynamically after hydration for results maps; preserve immutable restaurant ranks and verified coordinates so SSR and table sorting cannot alter pins.
+- Load Google Maps asynchronously after hydration with one shared callback-based script; preserve immutable restaurant ranks and verified coordinates so SSR and table sorting cannot alter pins.
