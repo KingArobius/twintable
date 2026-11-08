@@ -1,15 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { restaurantMapsUrl, type GeocodedPlace } from "./restaurant-location";
-
+import { aiMatchesSchema, recommendationCacheKey } from "./recommendation-cache";
 
 export type Recommendation = {
   name: string;
-  neighborhood: string;
-  cuisine: string;
   price: 1 | 2 | 3 | 4;
-  summary: string;
-  ratings: { food: number; ambiance: number; service: number; menu: number; overall: number };
+  ratings: { food: number; ambiance: number; service: number; overall: number };
   lat?: number | undefined;
   lng?: number | undefined;
   mapsUrl: string;
@@ -41,8 +38,13 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { generateMessage, GatewayError } = await import("@lovable.dev/ai-gateway");
-    const prompt = `Find 6 real restaurants in ${data.city} that are most similar to "${data.restaurant}". Include the full street address of the specific branch in that city (street number, street, city, region). Never supply only a city as an address; if the street address is unknown use an empty string. Rate each 1-5 (half stars allowed) on how similar it is to "${data.restaurant}" for: food (cuisine & dishes), ambiance (vibe & decor), service (style of service), menu (format/price-structure similarity), and overall similarity. price is 1-4 ($ to $$$$). Reply with ONLY JSON, no prose: {"reference":"exactly 3 short words describing ${data.restaurant}, separated by dots, e.g. No-frills · Authentic · Cheap","results":[{"name":"","address":"","neighborhood":"","cuisine":"","price":2,"summary":"why it's similar, 1-2 sentences","ratings":{"food":4.5,"ambiance":4,"service":4,"menu":3.5,"overall":4}}]}`;
+    const prompt = `Find 6 distinct real restaurants in ${data.city} most similar to "${data.restaurant}". Rank best overall match first. Rate similarity from 1 to 5 in half-star increments: food (cuisine and dishes), ambiance (vibe and decor), service (service style), overall. Price is 1-4 ($-$$$$). Use your independent knowledge, not Google review scores. Return only compact JSON: {"results":[{"name":"Restaurant name","price":2,"ratings":{"food":4.5,"ambiance":4,"service":4,"overall":4}}]}. No addresses, descriptions, reference text, cuisine labels, neighborhoods, or menu scores.`;
     try {
+      const { readCachedMatches, writeCachedMatches } = await import("./recommendation-cache.server");
+      const cacheKey = await recommendationCacheKey(data);
+      let parsed = await readCachedMatches(cacheKey);
+      const cached = parsed !== null;
+      if (!parsed) {
       const res = await generateMessage({
         model: "anthropic/claude-sonnet-5",
         max_tokens: 3000,
@@ -53,7 +55,9 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
         .map((b) => b.text ?? "")
         .join("");
       const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
-      const parsed = JSON.parse(json) as { reference: string; results: Recommendation[] };
+      parsed = aiMatchesSchema.parse(JSON.parse(json));
+      await writeCachedMatches(cacheKey, parsed);
+      }
       const { findRestaurantBusiness } = await import("./google-locations.server");
       const cityLoc = await geocodeCity(data.city);
       const lookups = new Map<string, ReturnType<typeof findRestaurantBusiness>>();
@@ -77,7 +81,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
           };
         }),
       );
-      return { ok: true as const, reference: parsed.reference, results, cityLat: cityLoc?.lat, cityLng: cityLoc?.lng };
+      return { ok: true as const, reference: "", results, cityLat: cityLoc?.lat, cityLng: cityLoc?.lng, cached };
     } catch (e) {
       console.error(e);
       const msg = e instanceof GatewayError ? "The AI service is busy or unavailable. Please try again." : e instanceof Error && e.message.startsWith("Google") ? e.message : "Couldn't read the recommendations. Please try again.";

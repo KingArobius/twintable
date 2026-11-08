@@ -13,11 +13,12 @@ vi.mock("@tanstack/react-start", () => ({
 
 vi.mock("@lovable.dev/ai-gateway", () => ({
   generateMessage: vi.fn().mockResolvedValue({
-    content: [{ type: "text", text: JSON.stringify({ reference: "Test", results: [] }) }],
+    content: [{ type: "text", text: JSON.stringify({ results: [{ name: "Test BBQ", price: 2, ratings: { food: 4, ambiance: 4, service: 4, overall: 4 } }] }) }],
   }),
   GatewayError: class extends Error {},
 }));
 vi.mock("@/lib/google-locations.server", () => ({ findRestaurantBusiness: vi.fn() }));
+vi.mock("@/lib/recommendation-cache.server", () => ({ readCachedMatches: vi.fn().mockResolvedValue(null), writeCachedMatches: vi.fn() }));
 
 describe("Public restaurant search", () => {
   it("allows autocomplete without any authenticated context", async () => {
