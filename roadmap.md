@@ -1,4 +1,6 @@
 # Roadmap
+- [ ] Remove the added homepage introduction and restore its original heading
+- [ ] Create and attach a looping Apple Messages sharing preview
 - [x] Replace author/social branding and sharing image; preserve custom favicon and add Apple icon
 - [x] Verify Lovable badge is hidden
 - [x] Make searches reproducible from URLs with dynamic result metadata (Google-dependent end-to-end check unavailable)
