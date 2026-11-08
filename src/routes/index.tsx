@@ -158,7 +158,7 @@ function Index() {
                       </button>
                     </th>
                     <th className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
-                    {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
+                    {([["price", "Price"], ["overall", "Similarity Score"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
                       <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
                         <button
                           type="button"
@@ -166,7 +166,7 @@ function Index() {
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                           className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
+                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Sim.", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
                           <span className="hidden sm:inline">{label}</span>
                           {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </button>
