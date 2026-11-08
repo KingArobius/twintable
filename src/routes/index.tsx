@@ -14,9 +14,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Twin Table — Find restaurants like your favorite" },
-      { name: "description", content: "Discover restaurants similar to your favorite, ranked by real Google review ratings." },
+      { name: "description", content: "Discover restaurants similar to your favorite, ranked by AI similarity and real Google review ratings." },
       { property: "og:title", content: "Twin Table — Find restaurants like your favorite" },
-      { property: "og:description", content: "Discover similar restaurants with real Google ratings, review counts and Maps links." },
+      { property: "og:description", content: "Find your restaurant's twin with blended AI similarity and Google ratings, review counts and Maps links." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -35,7 +35,7 @@ function Stars({ value }: { value: number }) {
 }
 
 function Index() {
-  const [sortKey, setSortKey] = useState<ReviewSortKey>("google");
+  const [sortKey, setSortKey] = useState<ReviewSortKey>("overall");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   function toggleSort(key: ReviewSortKey) {
@@ -137,7 +137,7 @@ function Index() {
                         type="button"
                         onClick={() => toggleSort("rank")}
                         aria-sort={sortKey === "rank" ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
-                        className={`uppercase tracking-wider hover:text-foreground ${sortKey === "rank" ? "text-foreground" : ""}`}
+                        className={`h-auto px-0.5 text-[9px] uppercase tracking-normal hover:text-foreground sm:px-3 sm:text-xs ${sortKey === "rank" ? "text-foreground" : ""}`}
                       >
                         #{sortKey === "rank" ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                       </Button>
@@ -148,20 +148,20 @@ function Index() {
                         type="button"
                         onClick={() => toggleSort("price")}
                         aria-sort={sortKey === "price" ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
-                        className={`uppercase tracking-wider hover:text-foreground ${sortKey === "price" ? "text-foreground" : ""}`}
+                        className={`h-auto px-0.5 text-[9px] uppercase tracking-normal hover:text-foreground sm:px-3 sm:text-xs ${sortKey === "price" ? "text-foreground" : ""}`}
                       >
                         Price{sortKey === "price" ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                       </Button>
                     </th>
-                    {([["google", "Google Rating"], ["reviews", "Reviews"]] as [ReviewSortKey, string][]).map(([k, label]) => (
-                      <th key={k} className="px-0.5 py-2 font-medium sm:px-4 sm:py-3">
+                    {([["overall", "Overall"], ["similarity", "AI Similarity"], ["google", "Google Rating"], ["reviews", "Reviews"]] as [ReviewSortKey, string][]).map(([k, label]) => (
+                      <th key={k} className="px-0.5 py-2 font-medium sm:px-2 sm:py-3" title={k === "overall" ? "50% AI similarity + 50% Google rating; AI only when Google is unavailable" : label}>
                         <Button variant="ghost" size="sm"
                           type="button"
                           onClick={() => toggleSort(k)}
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
-                          className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
+                          className={`h-auto px-0.5 text-[9px] uppercase tracking-normal hover:text-foreground sm:px-1 sm:text-xs ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          <span className="sm:hidden">{k === "google" ? "Google" : "Reviews"}</span>
+                          <span className="sm:hidden">{{ overall: "Overall", similarity: "AI", google: "Google", reviews: "Reviews", rank: "#", price: "Price" }[k]}</span>
                           <span className="hidden sm:inline">{label}</span>
                           {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </Button>
@@ -182,6 +182,13 @@ function Index() {
                         <span className="text-primary">{"$".repeat(r.price)}</span>
                         <span className="hidden text-border sm:inline">{"$".repeat(4 - r.price)}</span>
                       </td>
+                      <td className="whitespace-nowrap px-0.5 py-2 sm:px-2 sm:py-4">
+                        <span className="inline-flex flex-col items-center gap-1" title={r.google ? "50% AI similarity + 50% Google rating" : "AI only: Google rating unavailable"}>
+                          <Stars value={r.overall} />
+                          {!r.google && <span className="text-[8px] text-muted-foreground sm:text-[10px]">AI only</span>}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-0.5 py-2 sm:px-2 sm:py-4" title="AI-estimated similarity to your restaurant"><Stars value={r.similarity} /></td>
                       <td className="whitespace-nowrap px-0.5 py-2 sm:px-4 sm:py-4">
                         {r.google ? <a href={r.google.url} target="_blank" rel="noopener noreferrer" className="inline-flex flex-col items-center gap-1 hover:text-primary" aria-label={`${r.name}: Google rating ${r.google.rating} of 5`}>
                           <Stars value={r.google.rating} />
