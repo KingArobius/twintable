@@ -105,7 +105,7 @@ function Index() {
         </header>
 
         <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
-          <p className="font-cursive text-lg leading-normal md:whitespace-nowrap md:text-2xl md:leading-normal">
+          <p className="font-rounded text-lg font-semibold leading-normal tracking-tight md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
               <span className="inline-block w-24 border-b-2 border-primary/40 text-left align-baseline md:w-32">

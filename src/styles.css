@@ -33,6 +33,7 @@
   --font-display: "Fraunces", serif;
   --font-sans: "DM Sans", sans-serif;
   --font-cursive: "Dancing Script", "Caveat", cursive;
+  --font-rounded: "Nunito", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
