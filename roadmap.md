@@ -4,7 +4,7 @@
 - [x] Verify repeat searches and output-token usage
 - [x] Recommend a monetization approach without adding payments
 - [x] Show recorded search calls and per-call AI credit costs in chat
-- [ ] Make the background color fade much slower while scrolling
+- [x] Make the background color fade much slower while scrolling
 
 - [x] Use Google Places business listings for restaurant addresses and stable pins
 - [x] Allow restaurant searches without sign-in while retaining server-only credentials and location matching checks
