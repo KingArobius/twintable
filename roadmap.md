@@ -1,7 +1,7 @@
 # Roadmap
-- [ ] Remove the added homepage introduction and restore its original heading
-- [ ] Create and attach a looping Apple Messages sharing preview
-- [ ] Make restaurant actions icon-only at the far right of each list row
+- [x] Remove the added homepage introduction and restore its original heading
+- [x] Create and attach a looping Apple Messages sharing preview (appears after publishing; Apple Messages playback not directly tested)
+- [x] Make restaurant actions icon-only at the far right of each list row; verify real search on desktop and phone
 - [x] Replace author/social branding and sharing image; preserve custom favicon and add Apple icon
 - [x] Verify Lovable badge is hidden
 - [x] Make searches reproducible from URLs with dynamic result metadata (Google-dependent end-to-end check unavailable)
