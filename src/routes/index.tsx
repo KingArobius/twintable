@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
+import { RestaurantPicker } from "@/components/RestaurantPicker";
+import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
 
 export const Route = createFileRoute("/")({
@@ -56,7 +58,7 @@ export function sortResults(list: Recommendation[], key: SortKey): Recommendatio
 function Index() {
   const [sort, setSort] = useState<SortKey>("overall");
   const recommend = useServerFn(recommendRestaurants);
-  const [restaurant, setRestaurant] = useState("");
+  const [place, setPlace] = useState<PlaceSuggestion | null>(null);
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,12 +66,13 @@ function Index() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!restaurant.trim() || !city.trim()) return;
+    if (!place) { setError("Please pick a restaurant from the suggestions."); return; }
+    if (!city.trim()) { setError("Please enter a city."); return; }
     setLoading(true);
     setError(null);
     setData(null);
     try {
-      const r = await recommend({ data: { restaurant, city } });
+      const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city } });
       if (r.ok) setData({ reference: r.reference, results: r.results });
       else setError(r.error);
     } catch {
@@ -88,9 +91,9 @@ function Index() {
           <p className="mt-4 text-muted-foreground">Name a restaurant you adore and a city — we'll find the closest matches there.</p>
         </header>
 
-        <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-2 rounded-2xl border bg-card p-2 shadow-sm md:flex-row">
-          <input value={restaurant} onChange={(e) => setRestaurant(e.target.value)} placeholder="Restaurant (e.g. Nobu)" className="flex-1 rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted" />
-          <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City (e.g. Chicago)" className="flex-1 rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted md:border-l" />
+        <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-2 rounded-2xl border bg-card p-2 shadow-sm md:flex-row md:items-start">
+          <RestaurantPicker value={place} onChange={setPlace} />
+          <input value={city} onChange={(e) => setCity(e.target.value)} aria-label="City" placeholder="City (e.g. Chicago)" className="flex-1 self-stretch md:self-auto rounded-xl bg-transparent px-4 py-3 outline-none focus:bg-muted md:border-l" />
           <button disabled={loading} className="rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
             {loading ? "Searching…" : "Search"}
           </button>
