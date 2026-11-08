@@ -29,7 +29,7 @@ function loadMaps(): Promise<void> {
   return loaderPromise;
 }
 
-export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommendation & { rank?: number })[]; cityLat?: number; cityLng?: number }) {
+export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommendation & { rank?: number })[]; cityLat?: number | undefined; cityLng?: number | undefined }) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const located = results
