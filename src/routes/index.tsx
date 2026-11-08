@@ -125,7 +125,7 @@ function Index() {
             <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
+                  <tr className="border-b text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
                     <th className="px-1.5 py-2 font-medium sm:px-4 sm:py-3">#</th>
                     <th className="px-1.5 py-2 font-medium sm:px-4 sm:py-3">Restaurant</th>
                     {([["price", "Price"], ["overall", "Overall"], ...LABELS] as [SortKey, string][]).map(([k, label]) => (
@@ -166,6 +166,7 @@ function Index() {
                 </tbody>
               </table>
             </div>
+            <ResultsMap results={sorted} />
             </>
             ); })()}
           </section>
