@@ -14,9 +14,10 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Twin Table — Find restaurants like your favorite" },
-      { name: "description", content: "Search a restaurant and a city to discover similar spots, rated for food, ambiance and more." },
+      { name: "description", content: "Familiar food, unfamiliar places" },
       { property: "og:title", content: "Twin Table — Find restaurants like your favorite" },
-      { property: "og:description", content: "Discover restaurants similar to the ones you love, in any city." },
+      { property: "og:description", content: "Familiar food, unfamiliar places" },
+      { name: "twitter:description", content: "Familiar food, unfamiliar places" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

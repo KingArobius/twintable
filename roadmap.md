@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Set homepage search and social descriptions to the requested wording
+- [x] Request publication of the sitemap, descriptions, and production visitor-search tracking (deployment confirmation pending)
 
 - [x] Review SEO and present findings without changing the site
 - [x] Add and verify the user-approved sitemap correction
