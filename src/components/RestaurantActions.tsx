@@ -20,7 +20,7 @@ export function RestaurantActions({ restaurant, city }: { restaurant: Recommenda
       {actions.map(({ label, href, Icon }) => (
         <Tooltip key={label}>
           <TooltipTrigger asChild>
-            <Button asChild variant="ghost" size="icon" className="size-6 shrink-0 text-primary sm:size-9">
+            <Button asChild variant="ghost" size="icon" className="size-6 shrink-0 text-primary [&_svg]:size-2.5 sm:size-9 sm:[&_svg]:size-4">
               <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${label} for ${restaurant.name}`}><Icon className="size-2.5 sm:size-4" aria-hidden="true" /></a>
             </Button>
           </TooltipTrigger>
