@@ -37,27 +37,29 @@ const LABELS: [keyof Recommendation["ratings"], string][] = [
   ["menu", "Menu & format"],
 ];
 
-type SortKey = "overall" | "food" | "ambiance" | "service" | "menu" | "priceAsc" | "priceDesc";
-const SORTS: [SortKey, string][] = [
-  ["overall", "Overall match"],
-  ["food", "Food"],
-  ["ambiance", "Ambiance"],
-  ["service", "Service"],
-  ["menu", "Menu & format"],
-  ["priceAsc", "Price: low to high"],
-  ["priceDesc", "Price: high to low"],
-];
+type SortKey = "overall" | "food" | "ambiance" | "service" | "menu" | "price";
+type SortDir = "asc" | "desc";
 
-export function sortResults(list: Recommendation[], key: SortKey): Recommendation[] {
+export function sortResults(list: Recommendation[], key: SortKey, dir: SortDir): Recommendation[] {
+  const sign = dir === "asc" ? 1 : -1;
   return [...list].sort((a, b) => {
-    if (key === "priceAsc") return a.price - b.price || b.ratings.overall - a.ratings.overall;
-    if (key === "priceDesc") return b.price - a.price || b.ratings.overall - a.ratings.overall;
-    return b.ratings[key] - a.ratings[key] || b.ratings.overall - a.ratings.overall;
+    const diff = key === "price" ? a.price - b.price : a.ratings[key] - b.ratings[key];
+    return sign * diff || b.ratings.overall - a.ratings.overall;
   });
 }
 
 function Index() {
-  const [sort, setSort] = useState<SortKey>("overall");
+  const [sortKey, setSortKey] = useState<SortKey>("overall");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  function toggleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir(key === "price" ? "asc" : "desc");
+    }
+  }
   const recommend = useServerFn(recommendRestaurants);
   const [place, setPlace] = useState<PlaceSuggestion | null>(null);
   const [city, setCity] = useState<PlaceSuggestion | null>(null);
