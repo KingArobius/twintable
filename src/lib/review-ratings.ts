@@ -1,7 +1,12 @@
 export type GoogleReview = { rating: number; count: number; url: string };
-export type ReviewSortable = { price: number; google: GoogleReview | null; rank: number };
-export type ReviewSortKey = "rank" | "google" | "reviews" | "price";
+export type ReviewSortable = { price: number; google: GoogleReview | null; rank: number; similarity?: number; overall?: number };
+export type ReviewSortKey = "rank" | "overall" | "similarity" | "google" | "reviews" | "price";
 export type SortDir = "asc" | "desc";
+
+export function blendedScore(similarity: number, google: GoogleReview | null): number {
+  // Equal weights on the same 1–5 scale; never fabricate a missing Google rating.
+  return google ? (similarity + google.rating) / 2 : similarity;
+}
 
 export function sortByReviews<T extends ReviewSortable>(list: T[], key: ReviewSortKey, dir: SortDir): T[] {
   return [...list].sort((a, b) => {
@@ -9,7 +14,7 @@ export function sortByReviews<T extends ReviewSortable>(list: T[], key: ReviewSo
       if (!a.google && b.google) return 1;
       if (a.google && !b.google) return -1;
     }
-    const value = (r: T) => key === "rank" ? r.rank : key === "price" ? r.price : key === "reviews" ? r.google?.count ?? 0 : r.google?.rating ?? 0;
+    const value = (r: T) => key === "rank" ? r.rank : key === "price" ? r.price : key === "overall" ? r.overall ?? 0 : key === "similarity" ? r.similarity ?? 0 : key === "reviews" ? r.google?.count ?? 0 : r.google?.rating ?? 0;
     return (dir === "asc" ? 1 : -1) * (value(a) - value(b))
       || (b.google?.rating ?? -1) - (a.google?.rating ?? -1)
       || (b.google?.count ?? 0) - (a.google?.count ?? 0);
