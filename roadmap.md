@@ -4,7 +4,7 @@
 - [x] Verify restyled results view with a real search
 - [x] Background color shifts to another color as you scroll (keep emerald family)
 - [x] Entry boxes initially sized to fit lowercase "city" / "restaurant" placeholders
-- [ ] Connect Yelp for live review scores — blocked: Yelp connection card was declined; needs authorization and a Yelp API key
-- [x] Use direct Yelp and Google APIs rather than Claude web search
-- [ ] Replace AI similarity scores with real Google and Yelp ratings and a review-based overall ranking with source links
+- [x] Use Google ratings only; Yelp connection is no longer requested
+- [ ] Replace AI similarity scores with Google ratings and review-based ranking with source links
+- [ ] Blend AI similarity score with Google rating into one overall score that sets the ranking
 - [ ] Test ranking and unavailable-review handling
