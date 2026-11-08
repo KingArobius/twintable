@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Make restaurant action icons smaller on mobile; preserve desktop size and touch target
+- [x] Correct restaurant location matching and distinguish unverified Maps searches from verified directions (33 regression tests pass; live Google Maps validation requires authorized deployment)
 - [x] Remove the added homepage introduction and restore its original heading
 - [x] Create and attach a looping Apple Messages sharing preview (appears after publishing; Apple Messages playback not directly tested)
 - [x] Make restaurant actions icon-only at the far right of each list row; verify real search on desktop and phone

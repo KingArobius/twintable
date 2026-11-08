@@ -52,6 +52,21 @@ function businessWords(value: string) {
   return normalized(value).split(" ").filter((word) => word && !restaurantDescriptors.has(word));
 }
 
+// Recommendations may annotate a venue with a branch/neighborhood; verify its area separately.
+function businessIdentity(value: string, city: string) {
+  const base = value.replace(/\([^)]*\)/g, " ").trim();
+  const parts = base.split(/\s+[-–—]\s+/);
+  const suffix = parts[parts.length - 1];
+  return parts.length > 1 && suffix && normalized(suffix) === normalized(city)
+    ? parts.slice(0, -1).join(" ") : base;
+}
+
+export function hasRestaurantCoordinates(place: { lat?: number | undefined; lng?: number | undefined }): place is { lat: number; lng: number } {
+  return typeof place.lat === "number" && typeof place.lng === "number"
+    && Number.isFinite(place.lat) && Number.isFinite(place.lng)
+    && Math.abs(place.lat) <= 90 && Math.abs(place.lng) <= 180;
+}
+
 // Google often files venues under a neighborhood or neighboring town (Brooklyn, Santa Monica, Chuo City),
 // so accept either a matching locality component or a location near the searched city's center.
 export const METRO_RADIUS_KM = 40;
@@ -71,10 +86,10 @@ function sameBusinessName(requested: string[], title: string[]) {
 
 // Places coordinates identify the business itself, not an AI-supplied address.
 export function restaurantBusinessLocation(places: BusinessPlace[], name: string, city: string, center?: { lat: number; lng: number } | null) {
-  const requested = businessWords(name);
+  const requested = businessWords(businessIdentity(name, city));
   for (const place of places) {
     const location = place.location;
-    const title = businessWords(place.displayName?.text ?? "");
+    const title = businessWords(businessIdentity(place.displayName?.text ?? "", city));
     const business = place.types?.some((type) => type.endsWith("_restaurant") || ["restaurant", "food", "cafe", "bar", "bakery", "meal_takeaway", "deli", "steak_house"].includes(type));
     if (!business || !sameBusinessName(requested, title) || !place.id || !place.formattedAddress || !location
       || place.businessStatus === "CLOSED_PERMANENTLY"

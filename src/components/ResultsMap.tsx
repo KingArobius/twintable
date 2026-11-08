@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Recommendation } from "@/lib/recommend.functions";
+import { hasRestaurantCoordinates } from "@/lib/restaurant-location";
 
 declare global {
   interface Window {
@@ -34,8 +35,9 @@ export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommenda
   const [failed, setFailed] = useState(false);
   const located = results
     .map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
-    .filter((x) => typeof x.r.lat === "number" && typeof x.r.lng === "number");
-  const hasCityCenter = typeof cityLat === "number" && typeof cityLng === "number";
+    .filter((x) => hasRestaurantCoordinates(x.r));
+  const cityCenter = { lat: cityLat, lng: cityLng };
+  const hasCityCenter = hasRestaurantCoordinates(cityCenter);
 
   useEffect(() => {
     if ((!located.length && !hasCityCenter) || !ref.current) return;
@@ -50,7 +52,7 @@ export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommenda
           streetViewControl: false,
         });
         located.forEach(({ r, rank }) => {
-          if (typeof r.lat !== "number" || typeof r.lng !== "number") return;
+          if (!hasRestaurantCoordinates(r)) return;
           const pos = { lat: r.lat, lng: r.lng };
           bounds.extend(pos);
           const marker = new window.google.maps.Marker({
@@ -66,8 +68,8 @@ export function ResultsMap({ results, cityLat, cityLng }: { results: (Recommenda
           map.setZoom(17);
         } else if (located.length > 1) {
           map.fitBounds(bounds, 60);
-        } else if (hasCityCenter) {
-          map.setCenter({ lat: cityLat!, lng: cityLng! });
+        } else if (hasRestaurantCoordinates(cityCenter)) {
+          map.setCenter(cityCenter);
           map.setZoom(12);
         }
       })
