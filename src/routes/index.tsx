@@ -115,39 +115,44 @@ function Index() {
             {(() => { const sorted = sortResults(data.results, sort); return (
             <>
             <ResultsMap results={sorted} />
-            <div className="flex flex-col gap-4">
-              {sorted.map((r, i) => (
-                <article key={r.name} className="rounded-2xl border bg-card p-6">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-mono text-sm font-bold text-primary-foreground">{i + 1}</span>
-                      <div>
-                        <h2 className="font-display text-2xl">
-                          <a href={r.mapsUrl} target="_blank" rel="noopener" className="hover:underline">{r.name}</a>
-                        </h2>
-                        <p className="text-sm text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
-                      </div>
-                    </div>
-                    <span className="font-mono text-lg">
-                      <span className="text-primary">{"$".repeat(r.price)}</span>
-                      <span className="text-border">{"$".repeat(4 - r.price)}</span>
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm">{r.summary}</p>
-                  <div className="mt-4 flex items-center justify-between border-t pt-4">
-                    <span className="font-medium">Overall match</span>
-                    <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-sm">{r.ratings.overall}</span></span>
-                  </div>
-                  <dl className="mt-2 grid gap-1 md:grid-cols-2 md:gap-x-10">
+            <div className="overflow-x-auto rounded-2xl border bg-card shadow-sm">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead>
+                  <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <th className="px-4 py-3 font-medium">#</th>
+                    <th className="px-4 py-3 font-medium">Restaurant</th>
+                    <th className="px-4 py-3 font-medium">Price</th>
+                    <th className="px-4 py-3 font-medium">Overall</th>
                     {LABELS.map(([k, label]) => (
-                      <div key={k} className="flex items-center justify-between text-sm">
-                        <dt className="text-muted-foreground">{label}</dt>
-                        <dd><Stars value={r.ratings[k]} /></dd>
-                      </div>
+                      <th key={k} className="px-4 py-3 font-medium">{label}</th>
                     ))}
-                  </dl>
-                </article>
-              ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((r, i) => (
+                    <tr key={r.name} className="border-b last:border-0 align-top hover:bg-muted/50">
+                      <td className="px-4 py-4">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">{i + 1}</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-lg hover:underline">{r.name}</a>
+                        <p className="text-xs text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
+                        <p className="mt-1 max-w-xs text-xs text-muted-foreground">{r.summary}</p>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4 font-mono">
+                        <span className="text-primary">{"$".repeat(r.price)}</span>
+                        <span className="text-border">{"$".repeat(4 - r.price)}</span>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <span className="flex items-center gap-2"><Stars value={r.ratings.overall} /><span className="font-mono text-xs">{r.ratings.overall}</span></span>
+                      </td>
+                      {LABELS.map(([k]) => (
+                        <td key={k} className="whitespace-nowrap px-4 py-4"><Stars value={r.ratings[k]} /></td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
             </>
             ); })()}
