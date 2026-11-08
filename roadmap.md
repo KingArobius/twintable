@@ -5,3 +5,4 @@
 - [x] Two-line mobile layout with fields at end of each line
 - [x] Remove the "✓ address" confirmation text shown after picking a city/restaurant
 - [x] Prettier search button (emerald gradient pill) and background (soft emerald glow)
+- [ ] Remove the 3-word reference line and the "Click a column heading to sort" hint
