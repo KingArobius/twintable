@@ -4,6 +4,8 @@
 - [ ] Make searches reproducible from URLs with dynamic result metadata
 - [ ] Add Share and Share on X controls with copy confirmation
 - [ ] Add mobile-friendly directions, website, and reservation actions with optional affiliate configuration
+- [ ] Improve crawler-visible homepage and prerender it using native page metadata
+- [ ] Create popular-search landing pages, related links, structured data, sitemap entries, and homepage links (blocked: actual combination list not supplied)
 - [x] Create and verify blurred food previews with TWIN TABLE for social sharing and browser icon
 - [x] Replace the shared-link headline with Familiar food, unfamiliar places
 - [x] Set homepage search and social descriptions to the requested wording
