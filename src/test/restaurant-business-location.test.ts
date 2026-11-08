@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { restaurantBusinessLocation, type BusinessPlace } from "@/lib/restaurant-location";
 
 const listing: BusinessPlace = {
-  id: "google-business", displayName: { text: "Twin Cafe" }, types: ["cafe", "food"],
+  id: "google-business", displayName: { text: "Twin Cafe" }, types: ["cafe", "food"], businessStatus: "OPERATIONAL",
   formattedAddress: "123 Main St, Austin, TX", location: { latitude: 30.2672, longitude: -97.7431 },
   addressComponents: [{ longText: "Austin", types: ["locality"] }],
 };
@@ -21,6 +21,12 @@ describe("Google business locations", () => {
   });
   it("rejects permanently closed businesses", () => {
     expect(restaurantBusinessLocation([{ ...listing, businessStatus: "CLOSED_PERMANENTLY" }], "Twin Cafe", "Austin")).toBeNull();
+  });
+  it("rejects temporarily closed businesses", () => {
+    expect(restaurantBusinessLocation([{ ...listing, businessStatus: "CLOSED_TEMPORARILY" }], "Twin Cafe", "Austin")).toBeNull();
+  });
+  it("rejects businesses without confirmed operating status", () => {
+    expect(restaurantBusinessLocation([{ ...listing, businessStatus: undefined }], "Twin Cafe", "Austin")).toBeNull();
   });
   it("rejects invalid coordinates", () => {
     expect(restaurantBusinessLocation([{ ...listing, location: { latitude: 100, longitude: 0 } }], "Twin Cafe", "Austin")).toBeNull();

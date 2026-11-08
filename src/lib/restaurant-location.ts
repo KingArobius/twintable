@@ -98,7 +98,7 @@ export function restaurantBusinessLocation(places: BusinessPlace[], name: string
     const title = businessWords(businessIdentity(place.displayName?.text ?? "", city));
     const business = place.types?.some((type) => type.endsWith("_restaurant") || ["restaurant", "food", "cafe", "bar", "bakery", "meal_takeaway", "deli", "steak_house"].includes(type));
     if (!business || !sameBusinessName(requested, title) || !place.id || !place.formattedAddress || !location
-      || place.businessStatus === "CLOSED_PERMANENTLY"
+      || place.businessStatus !== "OPERATIONAL"
       || !Number.isFinite(location.latitude) || !Number.isFinite(location.longitude)
       || Math.abs(location.latitude) > 90 || Math.abs(location.longitude) > 180) continue;
     const cities = place.addressComponents?.filter((part) => part.types?.some((type) => ["locality", "postal_town"].includes(type) || type.startsWith("sublocality"))) ?? [];
