@@ -1,6 +1,7 @@
 # Roadmap
 
 - [x] Review SEO and present findings without changing the site
+- [x] Add and verify the user-approved sitemap correction
 - [x] Track completed visitor searches separately from preview and tests (live collection needs publish and visitor activity)
 
 - [x] Reduce repeated recommendation costs and unused AI output while keeping Claude
