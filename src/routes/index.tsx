@@ -108,7 +108,7 @@ function Index() {
               .
             </span>
           </p>
-          <button disabled={loading} className="mt-6 rounded-xl bg-primary px-8 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
+          <button disabled={loading} className="mt-6 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0">
             {loading ? "Searching…" : "Search"}
           </button>
         </form>
