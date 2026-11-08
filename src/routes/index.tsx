@@ -69,7 +69,7 @@ function Index() {
   const [city, setCity] = useState<PlaceSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<{ reference: string; results: RankedRecommendation[] } | null>(null);
+  const [data, setData] = useState<{ reference: string; results: RankedRecommendation[]; cityLat?: number | undefined; cityLng?: number | undefined } | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -91,7 +91,7 @@ function Index() {
     setData(null);
     try {
       const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}` } });
-      if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })) });
+      if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })), cityLat: r.cityLat, cityLng: r.cityLng });
       else setError(r.error);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -213,7 +213,7 @@ function Index() {
                 </tbody>
               </table>
             </div>
-            <ResultsMap results={data.results} />
+            <ResultsMap results={data.results} cityLat={data.cityLat} cityLng={data.cityLng} />
             </>
             ); })()}
           </section>

@@ -40,6 +40,24 @@ async function geocode(name: string, address: string | undefined, city: string) 
   }
 }
 
+async function geocodeCity(city: string) {
+  const lk = process.env["LOVABLE_API_KEY"];
+  const gk = process.env["GOOGLE_MAPS_API_KEY"];
+  if (!lk || !gk) return null;
+  try {
+    const res = await fetch(
+      `https://connector-gateway.lovable.dev/google_maps/maps/api/geocode/json?address=${encodeURIComponent(city)}`,
+      { headers: { Authorization: `Bearer ${lk}`, "X-Connection-Api-Key": gk } },
+    );
+    if (!res.ok) return null;
+    const json = (await res.json()) as { results?: GeocodedPlace[] };
+    const loc = json.results?.[0]?.geometry?.location;
+    return loc && Number.isFinite(loc.lat) && Number.isFinite(loc.lng) ? loc : null;
+  } catch {
+    return null;
+  }
+}
+
 export const recommendRestaurants = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z.object({ restaurant: z.string().trim().min(1).max(120), city: z.string().trim().min(1).max(120) }).parse(d),
@@ -59,6 +77,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
         .join("");
       const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
       const parsed = JSON.parse(json) as { reference: string; results: Recommendation[] };
+      const cityLoc = await geocodeCity(data.city);
       const results = await Promise.all(
         parsed.results.slice(0, 6).map(async (r) => {
           const loc = await geocode(r.name, r.address, data.city);
@@ -72,7 +91,7 @@ export const recommendRestaurants = createServerFn({ method: "POST" })
           };
         }),
       );
-      return { ok: true as const, reference: parsed.reference, results };
+      return { ok: true as const, reference: parsed.reference, results, cityLat: cityLoc?.lat, cityLng: cityLoc?.lng };
     } catch (e) {
       console.error(e);
       const msg = e instanceof GatewayError ? "The AI service is busy or unavailable. Please try again." : "Couldn't read the recommendations. Please try again.";
