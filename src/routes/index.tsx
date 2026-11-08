@@ -136,8 +136,6 @@ function Index() {
                       </td>
                       <td className="px-4 py-4">
                         <a href={r.mapsUrl} target="_blank" rel="noopener" className="font-display text-lg hover:underline">{r.name}</a>
-                        <p className="text-xs text-muted-foreground">{r.cuisine} · {r.neighborhood}</p>
-                        <p className="mt-1 max-w-xs text-xs text-muted-foreground">{r.summary}</p>
                       </td>
                       <td className="whitespace-nowrap px-4 py-4 font-mono">
                         <span className="text-primary">{"$".repeat(r.price)}</span>
