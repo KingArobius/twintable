@@ -29,11 +29,11 @@ function loadMaps(): Promise<void> {
   return loaderPromise;
 }
 
-export function ResultsMap({ results }: { results: Recommendation[] }) {
+export function ResultsMap({ results }: { results: (Recommendation & { rank?: number })[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const located = results
-    .map((r, i) => ({ r, rank: i + 1 }))
+    .map((r, i) => ({ r, rank: r.rank ?? i + 1 }))
     .filter((x) => typeof x.r.lat === "number" && typeof x.r.lng === "number");
 
   useEffect(() => {

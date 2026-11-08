@@ -213,7 +213,7 @@ function Index() {
                 </tbody>
               </table>
             </div>
-            <ResultsMap results={sorted} />
+            <ResultsMap results={data.results} />
             </>
             ); })()}
           </section>
