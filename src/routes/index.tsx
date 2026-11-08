@@ -93,16 +93,16 @@ function Index() {
         </header>
 
         <form onSubmit={onSubmit} className="mt-10 text-center">
-          <p className="font-cursive text-xl leading-loose md:whitespace-nowrap md:text-2xl md:leading-loose">
+          <p className="font-cursive text-lg leading-loose md:whitespace-nowrap md:text-2xl md:leading-loose">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
-              <span className="inline-block w-40 border-b-2 border-primary/40 text-left align-baseline">
+              <span className="inline-block w-28 border-b-2 border-primary/40 text-left align-baseline md:w-40">
                 <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="City" ariaLabel="City" emptyMessage="No matching cities found." />
               </span>
             </span>{" "}
             <span className="block md:inline">
               similar to{" "}
-              <span className="inline-block w-44 border-b-2 border-primary/40 text-left align-baseline">
+              <span className="inline-block w-36 border-b-2 border-primary/40 text-left align-baseline md:w-44">
                 <RestaurantPicker value={place} onChange={setPlace} placeholder="Restaurant" />
               </span>
               .
