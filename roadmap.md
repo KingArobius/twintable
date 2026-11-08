@@ -9,4 +9,4 @@
 - [x] Make restaurant names in the table smaller so they fit on mobile
 - [x] Smaller, prettier autocomplete dropdown that fits mobile screens
 - [x] Center table text and rank numbers horizontally and vertically
-- [ ] Eliminate scrolling on mobile results view (tighten spacing, shorter map)
+- [x] Eliminate scrolling on mobile results view (tightened spacing, shorter map)
