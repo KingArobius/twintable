@@ -10,6 +10,7 @@ import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Twin Table — Find restaurants like your favorite" },
