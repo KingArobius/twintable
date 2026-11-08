@@ -5,6 +5,8 @@ import { Sparkles } from "lucide-react";
 import { RestaurantPicker } from "@/components/RestaurantPicker";
 import foodSpread from "@/assets/food-spread.jpg";
 import { ResultsMap } from "@/components/ResultsMap";
+import { SearchSignIn } from "@/components/SearchSignIn";
+import { Button } from "@/components/ui/button";
 import type { PlaceSuggestion } from "@/lib/places.functions";
 import { recommendRestaurants, type Recommendation } from "@/lib/recommend.functions";
 
@@ -68,6 +70,7 @@ function Index() {
   const [place, setPlace] = useState<PlaceSuggestion | null>(null);
   const [city, setCity] = useState<PlaceSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ reference: string; results: RankedRecommendation[]; cityLat?: number | undefined; cityLng?: number | undefined } | null>(null);
 
@@ -90,7 +93,7 @@ function Index() {
     setError(null);
     setData(null);
     try {
-      const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}` } });
+      const r = await recommend({ data: { restaurant: `${place.name} (${place.address})`, city: `${city.name}, ${city.address}`, cityName: city.name } });
       if (r.ok) setData({ reference: r.reference, results: r.results.map((x, i) => ({ ...x, rank: i + 1 })), cityLat: r.cityLat, cityLng: r.cityLng });
       else setError(r.error);
     } catch {
@@ -121,22 +124,23 @@ function Index() {
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
               <span className="inline-block border-b-2 border-primary/40 text-left align-baseline">
-                <RestaurantPicker value={city} onChange={setCity} types={["locality"]} placeholder="city" ariaLabel="City" emptyMessage="No matching cities found." />
+                <RestaurantPicker disabled={!signedIn} value={city} onChange={setCity} types={["locality"]} placeholder="city" ariaLabel="City" emptyMessage="No matching cities found." />
               </span>
             </span>{" "}
             <span className="block md:inline">
               similar to{" "}
               <span className="inline-block border-b-2 border-primary/40 text-left align-baseline">
-                <RestaurantPicker value={place} onChange={setPlace} placeholder="restaurant" />
+                <RestaurantPicker disabled={!signedIn} value={place} onChange={setPlace} placeholder="restaurant" />
               </span>
               .
             </span>
           </div>
-          <button disabled={loading} className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary-foreground/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 md:mt-0">
+          <Button disabled={loading || !signedIn} className="mt-4 h-auto inline-flex items-center gap-2 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary-foreground/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 md:mt-0">
             <Sparkles className="h-4 w-4" />
             {loading ? "Searching…" : "Search"}
-          </button>
+          </Button>
         </form>
+        <SearchSignIn onChange={setSignedIn} />
 
         {loading && <p className="mt-10 text-center text-muted-foreground animate-pulse">Tasting the town…</p>}
         {error && <p className="mt-10 text-center text-destructive">{error}</p>}

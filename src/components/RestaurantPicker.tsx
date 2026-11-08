@@ -10,6 +10,7 @@ export function RestaurantPicker({
   ariaLabel = "Restaurant",
   emptyMessage = "No matching restaurants found.",
   className = "",
+  disabled = false,
 }: {
   value: PlaceSuggestion | null;
   onChange: (p: PlaceSuggestion | null) => void;
@@ -18,6 +19,7 @@ export function RestaurantPicker({
   ariaLabel?: string;
   emptyMessage?: string;
   className?: string;
+  disabled?: boolean;
 }) {
   const fetchSuggestions = useServerFn(autocompleteRestaurants);
   const [text, setText] = useState("");
@@ -29,7 +31,7 @@ export function RestaurantPicker({
   const reqId = useRef(0);
 
   useEffect(() => {
-    if (value || text.trim().length < 2) {
+    if (disabled || value || text.trim().length < 2) {
       setItems([]);
       setMsg(null);
       return;
@@ -38,7 +40,9 @@ export function RestaurantPicker({
     const id = ++reqId.current;
     const t = setTimeout(async () => {
       try {
-        const r = await fetchSuggestions({ data: { input: text, sessionToken: token.current!, types } });
+        const sessionToken = token.current;
+        if (!sessionToken) return;
+        const r = await fetchSuggestions({ data: { input: text, sessionToken, types } });
         if (id !== reqId.current) return;
         setItems(r.suggestions);
         setActive(0);
@@ -50,7 +54,7 @@ export function RestaurantPicker({
     }, 300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text, value, fetchSuggestions]);
+  }, [text, value, fetchSuggestions, disabled]);
 
   function pick(p: PlaceSuggestion) {
     onChange(p);
@@ -63,6 +67,7 @@ export function RestaurantPicker({
     <div className={`relative inline-block ${className}`}>
       <span aria-hidden className="invisible block whitespace-pre px-1 py-0 leading-none">{`${text || placeholder}\u00a0\u00a0`}</span>
       <input
+        disabled={disabled}
         value={text}
         role="combobox"
         aria-expanded={open}

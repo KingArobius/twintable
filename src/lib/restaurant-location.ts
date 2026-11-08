@@ -31,3 +31,36 @@ export function restaurantMapsUrl(name: string, address: string, placeId?: strin
   if (placeId) params.set("query_place_id", placeId);
   return `https://www.google.com/maps/search/?${params}`;
 }
+
+export type BusinessPlace = {
+  id?: string;
+  displayName?: { text?: string };
+  formattedAddress?: string;
+  location?: { latitude: number; longitude: number };
+  types?: string[];
+  businessStatus?: string;
+  addressComponents?: { longText?: string; types?: string[] }[];
+};
+
+function normalized(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+// Places coordinates identify the business itself, not an AI-supplied address.
+export function restaurantBusinessLocation(places: BusinessPlace[], name: string, city: string) {
+  const requested = normalized(name).split(" ").filter(Boolean);
+  for (const place of places) {
+    const location = place.location;
+    const title = normalized(place.displayName?.text ?? "");
+    const business = place.types?.some((type) => ["restaurant", "food", "cafe", "bar", "bakery", "meal_takeaway"].includes(type));
+    const cities = place.addressComponents?.filter((part) => part.types?.some((type) => ["locality", "postal_town", "sublocality", "sublocality_level_1"].includes(type))) ?? [];
+    const sameCity = cities.some((part) => normalized(part.longText ?? "") === normalized(city));
+    const sameName = requested.length > 0 && requested.every((word) => title.split(" ").includes(word));
+    if (!business || !sameCity || !sameName || !place.id || !place.formattedAddress || !location
+      || place.businessStatus === "CLOSED_PERMANENTLY"
+      || !Number.isFinite(location.latitude) || !Number.isFinite(location.longitude)
+      || Math.abs(location.latitude) > 90 || Math.abs(location.longitude) > 180) continue;
+    return { lat: location.latitude, lng: location.longitude, address: place.formattedAddress, placeId: place.id };
+  }
+  return null;
+}

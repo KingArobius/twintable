@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] Use Google Places business listings for restaurant addresses and stable pins
+- [x] Protect paid Google lookups with sign-in and verify location matching tests
+
 - [x] Modernize UI (glass surfaces, gradient button, refined table/dropdown/map)
 - [x] Verify restyled results view with a real search
 - [x] Background color shifts to another color as you scroll (keep emerald family)
