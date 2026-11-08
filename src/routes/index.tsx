@@ -43,15 +43,11 @@ type RankedRecommendation = Recommendation & { rank: number };
 type SortKey = "rank" | "overall" | "food" | "ambiance" | "service" | "menu" | "price";
 type SortDir = "asc" | "desc";
 
-export function sortResults<T extends Recommendation>(list: T[], key: SortKey, dir: SortDir): T[] {
+export function sortResults(list: RankedRecommendation[], key: SortKey, dir: SortDir): RankedRecommendation[] {
   const sign = dir === "asc" ? 1 : -1;
   return [...list].sort((a, b) => {
     const diff =
-      key === "price"
-        ? a.price - b.price
-        : key === "rank"
-          ? (a as RankedRecommendation).rank - (b as RankedRecommendation).rank
-          : a.ratings[key] - b.ratings[key];
+      key === "price" ? a.price - b.price : key === "rank" ? a.rank - b.rank : a.ratings[key] - b.ratings[key];
     return sign * diff || b.ratings.overall - a.ratings.overall;
   });
 }
