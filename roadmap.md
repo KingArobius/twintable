@@ -8,3 +8,5 @@
 - [x] Remove the 3-word reference line and the "Click a column heading to sort" hint
 - [x] Make restaurant names in the table smaller so they fit on mobile
 - [x] Smaller, prettier autocomplete dropdown that fits mobile screens
+- [x] Center table text and rank numbers horizontally and vertically
+- [ ] Eliminate scrolling on mobile results view (tighten spacing, shorter map)
