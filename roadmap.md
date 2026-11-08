@@ -5,7 +5,8 @@
 - [x] Background color shifts to another color as you scroll (keep emerald family)
 - [x] Entry boxes initially sized to fit lowercase "city" / "restaurant" placeholders
 - [x] Use Google ratings only; Yelp connection is no longer requested
-- [ ] Replace AI similarity scores with Google ratings and review-based ranking with source links
-- [ ] Blend AI similarity score with Google rating into one overall score that sets the ranking
-- [ ] Test ranking and unavailable-review handling
-- [ ] Move Twin Table text underneath the search bar
+- [x] Fetch real Google ratings and source links; do not use Yelp
+- [x] Blend AI similarity score with Google rating into one overall score that sets the ranking
+- [x] Test ranking and unavailable-review handling
+- [x] Move Twin Table text underneath the search bar
+- [ ] Validate live Google scores and map on an authorized deployed origin — sandbox Maps verification is unsupported

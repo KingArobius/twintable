@@ -95,7 +95,7 @@ function Index() {
           />
         </div>
         <form onSubmit={onSubmit} className="glass mx-auto mt-6 block w-fit rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6 md:flex md:items-center md:gap-5 md:py-4">
-          <p className="font-rounded text-base font-semibold leading-normal tracking-tight sm:text-lg md:whitespace-nowrap md:text-xl md:leading-normal lg:text-2xl">
+          <div className="font-rounded text-base font-semibold leading-normal tracking-tight sm:text-lg md:whitespace-nowrap md:text-xl md:leading-normal lg:text-2xl">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
               <span className="inline-block border-b-2 border-primary/40 text-left align-baseline">
@@ -109,7 +109,7 @@ function Index() {
               </span>
               .
             </span>
-          </p>
+          </div>
           <Button type="submit" disabled={loading} className="mt-4 h-auto inline-flex items-center gap-2 rounded-full bg-gradient-primary px-10 py-3 font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/30 ring-1 ring-primary-foreground/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40 hover:brightness-110 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 md:mt-0">
             <Sparkles className="h-4 w-4" />
             {loading ? "Searching…" : "Search"}
