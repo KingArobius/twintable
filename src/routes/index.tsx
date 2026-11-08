@@ -104,7 +104,7 @@ function Index() {
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
         </header>
 
-        <form onSubmit={onSubmit} className="glass mt-6 rounded-3xl px-4 py-6 text-center sm:mt-10 sm:px-10 sm:py-8">
+        <form onSubmit={onSubmit} className="mt-6 text-center sm:mt-10">
           <p className="font-cursive text-lg leading-normal md:whitespace-nowrap md:text-2xl md:leading-normal">
             <span className="block md:inline">
               I'm looking for a restaurant in{" "}
