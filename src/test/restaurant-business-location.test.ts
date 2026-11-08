@@ -37,4 +37,14 @@ describe("Google business locations", () => {
   it("does not match names made only of generic restaurant descriptors", () => {
     expect(restaurantBusinessLocation([listing], "Cafe Restaurant", "Austin")).toBeNull();
   });
+  it("accepts a listing filed under a neighborhood near the searched city", () => {
+    const brooklyn = { ...listing, location: { latitude: 40.7099, longitude: -73.9623 }, addressComponents: [{ longText: "Brooklyn", types: ["sublocality_level_1"] }] };
+    expect(restaurantBusinessLocation([brooklyn], "Twin Cafe", "New York", { lat: 40.7128, lng: -74.006 })?.placeId).toBe("google-business");
+  });
+  it("rejects a same-name branch far from the searched city", () => {
+    expect(restaurantBusinessLocation([listing], "Twin Cafe", "Seattle", { lat: 47.6062, lng: -122.3321 })).toBeNull();
+  });
+  it("ignores leading articles like Le in the name", () => {
+    expect(restaurantBusinessLocation([{ ...listing, displayName: { text: "Comptoir du Panthéon" } }], "Le Comptoir du Panthéon", "Austin")?.placeId).toBe("google-business");
+  });
 });

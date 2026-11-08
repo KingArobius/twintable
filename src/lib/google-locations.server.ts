@@ -31,5 +31,5 @@ export async function findRestaurantBusiness(name: string, city: string, center:
     throw new Error(`Google restaurant lookup failed [${response.status}]: ${body}`);
   }
   const json = await response.json() as { places?: BusinessPlace[] };
-  return restaurantBusinessLocation(json.places ?? [], name, city);
+  return restaurantBusinessLocation(json.places ?? [], name, city, center);
 }

@@ -46,25 +46,43 @@ function normalized(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[’']/g, "").replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
 }
 
-const restaurantDescriptors = new Set(["the", "and", "restaurant", "restaurants", "cafe", "bar", "grill", "kitchen", "bakery"]);
+const restaurantDescriptors = new Set(["the", "and", "le", "la", "les", "el", "il", "los", "las", "restaurant", "restaurants", "cafe", "bar", "grill", "kitchen", "bakery"]);
 function businessWords(value: string) {
   return normalized(value).split(" ").filter((word) => word && !restaurantDescriptors.has(word));
 }
 
+// Google often files venues under a neighborhood or neighboring town (Brooklyn, Santa Monica, Chuo City),
+// so accept either a matching locality component or a location near the searched city's center.
+export const METRO_RADIUS_KM = 40;
+function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+  const rad = Math.PI / 180;
+  const h = Math.sin(((b.lat - a.lat) * rad) / 2) ** 2
+    + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(((b.lng - a.lng) * rad) / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+
+function sameBusinessName(requested: string[], title: string[]) {
+  if (requested.length === 0) return false;
+  const missing = requested.filter((word) => !title.includes(word)).length;
+  // Long names may differ by one word (e.g. "Comptoir du Panthéon" vs "Le Comptoir du Panthéon Paris").
+  return missing === 0 || (requested.length >= 3 && missing === 1);
+}
+
 // Places coordinates identify the business itself, not an AI-supplied address.
-export function restaurantBusinessLocation(places: BusinessPlace[], name: string, city: string) {
+export function restaurantBusinessLocation(places: BusinessPlace[], name: string, city: string, center?: { lat: number; lng: number } | null) {
   const requested = businessWords(name);
   for (const place of places) {
     const location = place.location;
     const title = businessWords(place.displayName?.text ?? "");
-    const business = place.types?.some((type) => ["restaurant", "food", "cafe", "bar", "bakery", "meal_takeaway"].includes(type));
-    const cities = place.addressComponents?.filter((part) => part.types?.some((type) => ["locality", "postal_town", "sublocality", "sublocality_level_1"].includes(type))) ?? [];
-    const sameCity = cities.some((part) => normalized(part.longText ?? "") === normalized(city));
-    const sameName = requested.length > 0 && requested.every((word) => title.includes(word));
-    if (!business || !sameCity || !sameName || !place.id || !place.formattedAddress || !location
+    const business = place.types?.some((type) => type.endsWith("_restaurant") || ["restaurant", "food", "cafe", "bar", "bakery", "meal_takeaway", "deli", "steak_house"].includes(type));
+    if (!business || !sameBusinessName(requested, title) || !place.id || !place.formattedAddress || !location
       || place.businessStatus === "CLOSED_PERMANENTLY"
       || !Number.isFinite(location.latitude) || !Number.isFinite(location.longitude)
       || Math.abs(location.latitude) > 90 || Math.abs(location.longitude) > 180) continue;
+    const cities = place.addressComponents?.filter((part) => part.types?.some((type) => ["locality", "postal_town"].includes(type) || type.startsWith("sublocality"))) ?? [];
+    const sameCity = cities.some((part) => normalized(part.longText ?? "") === normalized(city));
+    const nearCity = !!center && distanceKm(center, { lat: location.latitude, lng: location.longitude }) <= METRO_RADIUS_KM;
+    if (!sameCity && !nearCity) continue;
     return { lat: location.latitude, lng: location.longitude, address: place.formattedAddress, placeId: place.id };
   }
   return null;
