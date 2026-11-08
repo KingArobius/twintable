@@ -30,7 +30,7 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - Validate restaurant geocodes in the shared location helper; only precise business or numbered street-address matches may become pins, never city centroids or partial matches.
-- Resolve recommendation pins through server-only Google Places business search; validate the business name, city, and coordinates in the shared location helper rather than trusting AI addresses.
+- Resolve recommendation pins through server-only Google Places business search; on no validated match, retry once with the Maps icon's name-and-destination query without proximity bias, retaining shared business-name, geography, and coordinate validation. Never treat a Maps search link as verified location data.
 - Share coordinate eligibility between map pins and direction actions; unverified venues link to Maps search, not claimed directions, and ignore parenthetical branch annotations during business-name matching while validating geography separately.
 - Normalize punctuation and generic restaurant descriptors when matching Google business names; search with the full destination context and validate the area separately (matching locality/sublocality or within a metro radius of the geocoded city center) so neighborhood-filed venues pin while wrong-city branches do not.
 - Restaurant searches and autocomplete are public without sign-in; keep paid API credentials server-only and preserve cross-site request protection, six-result caps, name deduplication, and concurrency at six or below.
