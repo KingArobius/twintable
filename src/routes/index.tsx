@@ -11,13 +11,15 @@ import { recommendRestaurants, type Recommendation } from "@/lib/recommend.funct
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Twin Table — Find restaurants like your favorite" },
+      { title: "Twin Table — Restaurants like your favorite, away from home" },
       { name: "description", content: "Search a restaurant and a city to discover similar spots, rated for food, ambiance and more." },
-      { property: "og:title", content: "Twin Table — Find restaurants like your favorite" },
+      { property: "og:title", content: "Twin Table — Restaurants like your favorite, away from home" },
+      { property: "og:url", content: "https://twintable.app/" },
       { property: "og:description", content: "Discover restaurants similar to the ones you love, in any city." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://twintable.app/" }],
   }),
   component: Index,
 });
