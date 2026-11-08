@@ -83,7 +83,7 @@ export function RestaurantPicker({
       />
       {value && <p className="px-4 pb-1 text-xs text-muted-foreground truncate">✓ {value.address}</p>}
       {open && !value && (items.length > 0 || msg) && (
-        <ul role="listbox" className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg">
+        <ul role="listbox" className="absolute left-0 right-0 top-full z-20 mt-2 min-w-72 overflow-hidden rounded-xl border bg-popover font-sans text-base text-popover-foreground shadow-lg">
           {items.map((p, i) => (
             <li
               key={p.placeId}
