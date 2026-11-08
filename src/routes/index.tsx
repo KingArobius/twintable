@@ -166,7 +166,7 @@ function Index() {
                           aria-sort={sortKey === k ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
                           className={`uppercase tracking-wider hover:text-foreground ${sortKey === k ? "text-foreground" : ""}`}
                         >
-                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Overall", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
+                          <span className="sm:hidden">{{ rank: "#", price: "Price", overall: "Sim.", food: "Food", ambiance: "Amb.", service: "Serv.", menu: "Menu" }[k]}</span>
                           <span className="hidden sm:inline">{label}</span>
                           {sortKey === k ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
                         </button>
