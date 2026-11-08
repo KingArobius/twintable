@@ -8,3 +8,4 @@
 - [ ] Replace AI similarity scores with Google ratings and review-based ranking with source links
 - [ ] Blend AI similarity score with Google rating into one overall score that sets the ranking
 - [ ] Test ranking and unavailable-review handling
+- [ ] Move Twin Table text underneath the search bar

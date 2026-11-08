@@ -94,10 +94,6 @@ function Index() {
             className="h-full w-full scale-105 object-cover opacity-40 blur-md"
           />
         </div>
-        <header className="text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
-        </header>
-
         <form onSubmit={onSubmit} className="glass mx-auto mt-6 block w-fit rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6 md:flex md:items-center md:gap-5 md:py-4">
           <p className="font-rounded text-base font-semibold leading-normal tracking-tight sm:text-lg md:whitespace-nowrap md:text-xl md:leading-normal lg:text-2xl">
             <span className="block md:inline">
@@ -119,6 +115,10 @@ function Index() {
             {loading ? "Searching…" : "Search"}
           </Button>
         </form>
+
+        <header className="mt-4 text-center">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
+        </header>
 
         {loading && <p className="mt-10 text-center text-muted-foreground animate-pulse">Tasting the town…</p>}
         {error && <p className="mt-10 text-center text-destructive">{error}</p>}
