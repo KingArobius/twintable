@@ -82,7 +82,7 @@ export function RestaurantPicker({
         className="w-full rounded-xl bg-transparent px-1 py-0 leading-none outline-none focus:bg-muted"
       />
       {open && !value && (items.length > 0 || msg) && (
-        <ul role="listbox" className="absolute left-0 right-0 top-full z-20 mt-2 min-w-72 overflow-hidden rounded-xl border bg-popover font-sans text-base text-popover-foreground shadow-lg">
+        <ul role="listbox" className="absolute left-0 top-full z-20 mt-1.5 max-h-60 w-max min-w-56 max-w-80 overflow-y-auto rounded-2xl border border-primary/15 bg-popover p-1 font-sans text-sm text-popover-foreground shadow-xl shadow-primary/10 animate-in fade-in zoom-in-95 duration-150 max-sm:fixed max-sm:inset-x-4 max-sm:top-auto max-sm:w-auto max-sm:max-w-none">
           {items.map((p, i) => (
             <li
               key={p.placeId}
@@ -90,13 +90,13 @@ export function RestaurantPicker({
               aria-selected={i === active}
               onMouseDown={(e) => { e.preventDefault(); pick(p); }}
               onMouseEnter={() => setActive(i)}
-              className={`cursor-pointer px-4 py-3 ${i === active ? "bg-muted" : ""}`}
+              className={`cursor-pointer rounded-xl px-3 py-2 transition-colors ${i === active ? "bg-accent text-accent-foreground" : ""}`}
             >
-              <div className="font-medium">{p.name}</div>
-              <div className="text-xs text-muted-foreground">{p.address}</div>
+              <div className="truncate font-medium">{p.name}</div>
+              <div className="truncate text-[11px] text-muted-foreground">{p.address}</div>
             </li>
           ))}
-          {!items.length && msg && <li className="px-4 py-3 text-sm text-muted-foreground">{msg}</li>}
+          {!items.length && msg && <li className="px-3 py-2 text-xs text-muted-foreground">{msg}</li>}
         </ul>
       )}
     </div>
