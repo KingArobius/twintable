@@ -156,7 +156,11 @@ function Index() {
           />
         </div>
         <header className="text-center">
-          <h1 className="font-display text-3xl text-foreground">{search.restaurant && search.city ? `Restaurants like ${search.restaurant} in ${search.city}` : "Twin Table"}</h1>
+          {search.restaurant && search.city ? (
+            <h1 className="font-display text-3xl text-foreground">{`Restaurants like ${search.restaurant} in ${search.city}`}</h1>
+          ) : (
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Twin Table</p>
+          )}
         </header>
 
         <form onSubmit={onSubmit} className="glass mx-auto mt-6 block w-fit rounded-[2.5rem] px-4 py-4 text-center sm:mt-10 sm:px-8 sm:py-6 md:flex md:items-center md:gap-5 md:py-4">
@@ -267,10 +271,6 @@ function Index() {
             ); })()}
           </section>
         )}
-        {!search.restaurant && <section className="mx-auto mt-12 max-w-2xl text-center">
-          <h2 className="font-display text-xl">Familiar food, unfamiliar places</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Find restaurants like your favorite, in any city. Twin Table compares food, ambiance, and service similarity, with price ranges from $ to $$$$.</p>
-        </section>}
       </div>
     </main>
   );
