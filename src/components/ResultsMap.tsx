@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Map as LeafletMap } from "leaflet";
+import { loadGoogleMap } from "@/lib/google-map-loader";
 import type { Recommendation } from "@/lib/recommend.functions";
 
 export function mapRestaurants(results: (Recommendation & { rank?: number })[]) {
@@ -16,40 +16,45 @@ export function ResultsMap({ results }: { results: (Recommendation & { rank?: nu
   useEffect(() => {
     if (!located.length || !ref.current) return;
     let cancelled = false;
-    let map: LeafletMap | undefined;
+    let map: google.maps.Map | undefined;
+    const markers: google.maps.Marker[] = [];
     setFailed(false);
-    import("leaflet")
-      .then((L) => {
+    loadGoogleMap()
+      .then(() => {
         if (cancelled || !ref.current) return;
-        map = L.map(ref.current, { scrollWheelZoom: false });
-        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
-          maxZoom: 19,
-        }).addTo(map);
-        const bounds = L.latLngBounds([]);
+        map = new google.maps.Map(ref.current, {
+          clickableIcons: false, mapTypeControl: false, streetViewControl: false,
+          gestureHandling: "cooperative",
+          styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
+        });
+        const bounds = new google.maps.LatLngBounds();
         located.forEach(({ r, rank }) => {
           if (!map || typeof r.lat !== "number" || typeof r.lng !== "number") return;
-          const pos = L.latLng(r.lat, r.lng);
+          const pos = { lat: r.lat, lng: r.lng };
           bounds.extend(pos);
-          const label = document.createElement("span");
-          label.textContent = String(rank);
-          const marker = L.marker(pos, {
+          const marker = new google.maps.Marker({
+            map, position: pos,
             title: `${r.name}${r.address ? ` — ${r.address}` : ""}`,
-            alt: `Restaurant ${rank}: ${r.name}`,
-            icon: L.divIcon({ html: label, className: "restaurant-map-marker", iconSize: [28, 28], iconAnchor: [14, 14] }),
-          }).addTo(map);
-          marker.on("click", () => window.open(r.mapsUrl, "_blank", "noopener,noreferrer"));
+            label: String(rank),
+          });
+          markers.push(marker);
+          marker.addListener("click", () => window.open(r.mapsUrl, "_blank", "noopener,noreferrer"));
         });
         if (located.length === 1) {
-          map.setView(bounds.getCenter(), 17);
+          map.setCenter(bounds.getCenter());
+          map.setZoom(17);
         } else {
-          map.fitBounds(bounds, { padding: [30, 30], maxZoom: 17 });
+          map.fitBounds(bounds, 30);
+          google.maps.event.addListenerOnce(map, "idle", () => {
+            if (map && (map.getZoom() ?? 0) > 17) map.setZoom(17);
+          });
         }
       })
       .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
-      map?.remove();
+      markers.forEach((marker) => { google.maps.event.clearInstanceListeners(marker); marker.setMap(null); });
+      if (map) google.maps.event.clearInstanceListeners(map);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results]);
